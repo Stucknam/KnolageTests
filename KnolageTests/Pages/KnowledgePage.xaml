@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:KnolageTests.Controls"
+             x:Class="KnolageTests.Pages.KnowledgePage"
+             Title="База знаний">
+
+    <Grid Padding="16" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <SearchBar
+            x:Name="SearchBar"
+            Placeholder="Поиск..."
+            TextChanged="OnSearchTextChanged"
+            Grid.Row="0" />
+
+        <CollectionView
+            x:Name="ArticlesCollection"
+            SelectionMode="Single"
+            SelectionChanged="OnArticleSelected"
+            ItemsLayout="VerticalList"
+            VerticalOptions="FillAndExpand"
+            Grid.Row="1">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <controls:ArticleCard
+                        Title="{Binding Title}"
+                        Description="{Binding Description}"
+                        ImageSource="{Binding Image}"
+                        Tags="{Binding Tags}" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.EmptyView>
+                <Label Text="Нет статей" HorizontalOptions="Center" VerticalOptions="Center" TextColor="Gray"/>
+            </CollectionView.EmptyView>
+
+        </CollectionView>
+    </Grid>
+
+</ContentPage>

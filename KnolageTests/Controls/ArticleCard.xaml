@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KnolageTests.Controls.ArticleCard"
+             x:Name="Root">
+
+    <Frame CornerRadius="8" Padding="10" Margin="0,8" HasShadow="True">
+        <!-- FlexLayout with Wrap so content flows on small widths:
+             - Image has fixed basis (square) and won't shrink below its size.
+             - Content block has Grow=1 and MinWidthRequest=0 so it can compress and wrap text.
+        -->
+        <FlexLayout Direction="Row" Wrap="Wrap" AlignItems="Center" JustifyContent="Start">
+            <Image
+                Source="{Binding ImageSource, Source={x:Reference Root}}"
+                WidthRequest="80"
+                HeightRequest="80"
+                Aspect="AspectFill"
+                Margin="0,0,8,0"/>
+
+            <VerticalStackLayout Spacing="6" FlexLayout.Grow="1" >
+                <Label
+                    Text="{Binding Title, Source={x:Reference Root}}"
+                    FontAttributes="Bold"
+                    LineBreakMode="WordWrap"
+                    MaxLines="2"
+                    HorizontalOptions="StartAndExpand" />
+
+                <Label
+                    Text="{Binding Description, Source={x:Reference Root}}"
+                    FontSize="14"
+                    TextColor="Gray"
+                    LineBreakMode="WordWrap"
+                        MaxLines="3"
+                    HorizontalOptions="StartAndExpand" />
+
+                <!-- Tags: FlexLayout with Wrap so tags flow to next line when needed -->
+                <FlexLayout
+                    BindableLayout.ItemsSource="{Binding Tags, Source={x:Reference Root}}"
+                    Direction="Row"
+                    Wrap="Wrap"
+                    AlignItems="Center"
+                    >
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Padding="6,2" CornerRadius="12" BackgroundColor="#EEE" HasShadow="False" Margin="0,0,6,6">
+                                <Label Text="{Binding .}" FontSize="12" TextColor="#333" />
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+            </VerticalStackLayout>
+        </FlexLayout>
+    </Frame>
+
+</ContentView>

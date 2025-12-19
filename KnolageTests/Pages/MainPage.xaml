@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KnolageTests.Pages.MainPage">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="30,20"
+            Spacing="20">
+
+            <Label
+                Text="Выберите раздел"
+                HorizontalOptions="Center"
+                FontSize="20"
+                SemanticProperties.HeadingLevel="Level1" />
+
+            <Button
+                x:Name="KnowledgeBtn"
+                Text="База знаний"
+                Clicked="OnKnowledgeClicked"
+                HorizontalOptions="Fill" />
+
+            <Button
+                x:Name="TakeTestsBtn"
+                Text="Прохождение тестов"
+                Clicked="OnTakeTestsClicked"
+                HorizontalOptions="Fill" />
+
+            <Button
+                x:Name="CreateTestsBtn"
+                Text="Создание тестов"
+                Clicked="OnCreateTestsClicked"
+                HorizontalOptions="Fill" />
+
+            <Button
+                x:Name="EditTestsBtn"
+                Text="Редактирование тестов"
+                Clicked="OnEditTestsClicked"
+                HorizontalOptions="Fill" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

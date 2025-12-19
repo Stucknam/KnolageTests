@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KnolageTests.Pages.ArticlePage"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <Label Text="{Binding Title}"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   LineBreakMode="WordWrap" />
+
+            <Label Text="{Binding Description}"
+                   FontSize="16"
+                   TextColor="Gray"
+                   LineBreakMode="WordWrap" />
+
+            <Image Source="{Binding Image}"
+                   Aspect="AspectFit"
+                   HeightRequest="160"
+                   HorizontalOptions="Center" />
+
+            <Label Text="{Binding Content}"
+                   FontSize="14"
+                   LineBreakMode="WordWrap" />
+
+            
+            <Frame CornerRadius="8" Padding="12" HasShadow="True" BackgroundColor="Black" Margin="0,8,0,0">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Тесты по материалу" FontAttributes="Bold" />
+					<Label Text="Здесь будут тесты, проверяющие понимание прочитанного. Это пока заглушка." TextColor="Gray" LineBreakMode="WordWrap" />
+					<Button Text="Начать тест" Clicked="OnStartTestClicked" />
+				</VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
