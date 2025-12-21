@@ -21,6 +21,16 @@ namespace KnolageTests.Pages
                 Application.Current.MainPage = new NavigationPage(page);
         }
 
+        async void OnManageKnowledgeClicked(object sender, EventArgs e)
+        {
+            var page = new KnowledgeBaseManagePage();
+
+            if (Navigation != null)
+                await Navigation.PushAsync(page);
+            else
+                Application.Current.MainPage = new NavigationPage(page);
+        }
+
         async void OnTakeTestsClicked(object sender, EventArgs e)
         {
             var page = new ContentPage

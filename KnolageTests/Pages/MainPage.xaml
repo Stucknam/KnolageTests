@@ -21,6 +21,12 @@
                 HorizontalOptions="Fill" />
 
             <Button
+                x:Name="ManageKnowledgeBtn"
+                Text="Управление статьями"
+                Clicked="OnManageKnowledgeClicked"
+                HorizontalOptions="Fill" />
+
+            <Button
                 x:Name="TakeTestsBtn"
                 Text="Прохождение тестов"
                 Clicked="OnTakeTestsClicked"

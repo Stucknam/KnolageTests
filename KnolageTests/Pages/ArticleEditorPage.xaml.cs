@@ -146,11 +146,11 @@ namespace KnolageTests.Pages
                 // action buttons
                 var actions = new HorizontalStackLayout { Spacing = 8 };
 
-                var up = new Button { Text = "?", WidthRequest = 40, HeightRequest = 36 };
+                var up = new Button { Text = "Поднять выше", WidthRequest = 40, HeightRequest = 36 };
                 up.Clicked += (_, __) => MoveBlockUp(idx);
                 actions.Children.Add(up);
 
-                var down = new Button { Text = "?", WidthRequest = 40, HeightRequest = 36 };
+                var down = new Button { Text = "Опустить ниже", WidthRequest = 40, HeightRequest = 36 };
                 down.Clicked += (_, __) => MoveBlockDown(idx);
                 actions.Children.Add(down);
 

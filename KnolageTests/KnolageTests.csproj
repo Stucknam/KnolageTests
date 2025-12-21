@@ -86,6 +86,9 @@
 	  <MauiXaml Update="Pages\KnowledgeBaseListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\KnowledgeBaseManagePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\KnowledgePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

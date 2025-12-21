@@ -7,15 +7,20 @@
 
     <VerticalStackLayout Padding="12" Spacing="10">
 
+        <SearchBar x:Name="SearchBar"
+                   Placeholder="Search by title, subtitle, tags or text..."
+                   TextChanged="OnSearchTextChanged" />
+
         <HorizontalStackLayout Spacing="8" HorizontalOptions="Fill">
-            <Button Text="Create Article" Clicked="OnCreateArticleClicked" HorizontalOptions="Start" />
-            <Button Text="Refresh" Clicked="OnRefreshClicked" HorizontalOptions="EndAndExpand" />
+            <!--<Button Text="Create Article" Clicked="OnCreateArticleClicked" HorizontalOptions="Start" />-->
+            <!--<Button Text="Refresh" Clicked="OnRefreshClicked" HorizontalOptions="EndAndExpand" />-->
         </HorizontalStackLayout>
 
         <CollectionView x:Name="ArticlesCollectionView"
                         SelectionMode="Single"
                         SelectionChanged="OnSelectionChanged"
-                        EmptyView="No articles yet">
+                        EmptyView="No articles yet"
+                        ItemsLayout="VerticalList">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="0">

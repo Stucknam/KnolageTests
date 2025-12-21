@@ -9,12 +9,12 @@ using KnolageTests.Services;
 
 namespace KnolageTests.Pages
 {
-    public partial class KnowledgeBaseListPage : ContentPage
+    public partial class KnowledgeBaseManagePage : ContentPage
     {
         readonly KnowledgeBaseService _service = new KnowledgeBaseService();
         List<KnowledgeArticle> _articles = new();
 
-        public KnowledgeBaseListPage()
+        public KnowledgeBaseManagePage()
         {
             InitializeComponent();
             _ = LoadAsync();
@@ -31,6 +31,7 @@ namespace KnolageTests.Pages
             try
             {
                 _articles = await _service.GetAllAsync().ConfigureAwait(false);
+                // Apply current search (or show all if empty)
                 await MainThread.InvokeOnMainThreadAsync(() => ApplyFilter(SearchBar?.Text));
             }
             catch (Exception ex)
@@ -53,12 +54,11 @@ namespace KnolageTests.Pages
 
             if (string.IsNullOrWhiteSpace(query))
             {
-                ArticlesCollectionView.ItemsSource = _articles;
+                ManageCollectionView.ItemsSource = _articles;
                 return;
             }
 
             var q = query.Trim();
-
             var filtered = _articles.Where(a =>
                 (a.Title?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false)
                 || (a.Subtitle?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false)
@@ -71,36 +71,57 @@ namespace KnolageTests.Pages
                     && (b.Content?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false))))
                 .ToList();
 
-            ArticlesCollectionView.ItemsSource = filtered;
+            ManageCollectionView.ItemsSource = filtered;
         }
 
-        void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        async void OnRefreshClicked(object sender, EventArgs e)
         {
-            if (e.CurrentSelection?.FirstOrDefault() is KnowledgeArticle selected)
-            {
-                if (sender is CollectionView cv)
-                    cv.SelectedItem = null;
+            await LoadAsync();
+        }
 
-                var page = new ArticlePage(selected);
+        async void OnCreateClicked(object sender, EventArgs e)
+        {
+            var page = new ArticleEditorPage();
+            if (Navigation != null)
+                await Navigation.PushAsync(page);
+            else
+                Application.Current.MainPage = new NavigationPage(page);
+        }
+
+        async void OnEditClicked(object sender, EventArgs e)
+        {
+            if (sender is Button btn && btn.CommandParameter is KnowledgeArticle article)
+            {
+                var page = new ArticleEditorPage(article.Id);
                 if (Navigation != null)
-                    _ = Navigation.PushAsync(page);
+                    await Navigation.PushAsync(page);
                 else
                     Application.Current.MainPage = new NavigationPage(page);
             }
         }
 
-        //async void OnCreateArticleClicked(object sender, EventArgs e)
-        //{
-        //    var page = new ArticleEditorPage();
-        //    if (Navigation != null)
-        //        await Navigation.PushAsync(page);
-        //    else
-        //        Application.Current.MainPage = new NavigationPage(page);
-        //}
-
-        async void OnRefreshClicked(object sender, EventArgs e)
+        async void OnDeleteClicked(object sender, EventArgs e)
         {
-            await LoadAsync();
+            if (sender is Button btn && btn.CommandParameter is KnowledgeArticle article)
+            {
+                var confirm = await DisplayAlert("Confirm delete",
+                    $"Are you sure you want to delete '{article.Title}'?", "Delete", "Cancel");
+
+                if (!confirm) return;
+
+                try
+                {
+                    await _service.DeleteAsync(article.Id).ConfigureAwait(false);
+                    await LoadAsync();
+                }
+                catch (Exception ex)
+                {
+                    await MainThread.InvokeOnMainThreadAsync(async () =>
+                    {
+                        await DisplayAlert("Error", $"Failed to delete: {ex.Message}", "OK");
+                    });
+                }
+            }
         }
     }
 }
