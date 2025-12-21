@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KnolageTests.Pages.TestsManagePage"
+             Title="Управление тестами">
+
+    <VerticalStackLayout Padding="12" Spacing="8">
+
+        <SearchBar x:Name="SearchBar"
+                   Placeholder="Поиск тестов по названию или описанию..."
+                   TextChanged="OnSearchTextChanged" />
+
+        <HorizontalStackLayout Spacing="8">
+            <Button Text="Create test" Clicked="OnCreateClicked" HorizontalOptions="Start" />
+            <Button Text="Refresh" Clicked="OnRefreshClicked" HorizontalOptions="EndAndExpand" />
+        </HorizontalStackLayout>
+
+        <CollectionView x:Name="ManageCollectionView"
+                        ItemsLayout="VerticalList"
+                        SelectionMode="None"
+                        EmptyView="����� �� �������">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame CornerRadius="6" Padding="8" Margin="0,6" HasShadow="True">
+                        <HorizontalStackLayout Spacing="10">
+                            <VerticalStackLayout Spacing="4" HorizontalOptions="FillAndExpand">
+                                <Label Text="{Binding Test.Title}" FontAttributes="Bold" LineBreakMode="WordWrap" />
+                                <Label Text="{Binding Test.Description}" FontSize="14" TextColor="Gray" LineBreakMode="WordWrap" />
+                                <FlexLayout BindableLayout.ItemsSource="{Binding ArticleTitles}" Direction="Row" Wrap="Wrap" AlignItems="Center" Margin="0,6,0,0">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate>
+                                            <Frame Padding="6,2" CornerRadius="12" BackgroundColor="#EEE" HasShadow="False" Margin="0,0,6,6">
+                                                <Label Text="{Binding .}" FontSize="12" TextColor="#333" />
+                                            </Frame>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </FlexLayout>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Spacing="6" HorizontalOptions="End">
+                                <Button Text="Edit" Clicked="OnEditClicked" CommandParameter="{Binding Test}" WidthRequest="80" />
+                                <Button Text="Delete" BackgroundColor="IndianRed" TextColor="White" Clicked="OnDeleteClicked" CommandParameter="{Binding Test}" WidthRequest="80" />
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </VerticalStackLayout>
+</ContentPage>

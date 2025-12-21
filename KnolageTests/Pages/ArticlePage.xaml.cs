@@ -11,6 +11,9 @@ namespace KnolageTests.Pages
 {
     public partial class ArticlePage : ContentPage
     {
+        KnowledgeArticle? _article;
+        readonly TestsService _testsService = new TestsService();
+
         readonly KnowledgeBaseService _service = new KnowledgeBaseService();
 
         // Constructor: load by KnowledgeArticle Id
@@ -25,11 +28,14 @@ namespace KnolageTests.Pages
         {
             InitializeComponent();
             if (article == null) throw new ArgumentNullException(nameof(article));
+            _article = article;
             BindingContext = article;
             Title = article.Title;
             RenderArticle(article);
+            _ = LoadTestsAsync();
         }
 
+        
         async Task LoadByIdAsync(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -47,14 +53,74 @@ namespace KnolageTests.Pages
                 return;
             }
 
+            // ensure field is set so tests can be loaded
+            _article = article;
+
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
                 BindingContext = article;
                 Title = article.Title;
                 RenderArticle(article);
+                _ = LoadTestsAsync();
             });
         }
 
+        async Task LoadTestsAsync()
+        {
+            TestsContainer.Children.Clear();
+
+            if (_article == null)
+            {
+                TestsContainer.Children.Add(new Label { Text = "Для этой статьи пока нет тестов.", TextColor = Colors.Gray });
+                return;
+            }
+
+            List<Test> tests;
+            try
+            {
+                tests = await _testsService.GetByArticleIdAsync(_article.Id);
+            }
+            catch
+            {
+                // on error, show friendly message
+                TestsContainer.Children.Add(new Label { Text = "Не удалось загрузить тесты.", TextColor = Colors.Gray });
+                return;
+            }
+
+            if (tests == null || tests.Count == 0)
+            {
+                TestsContainer.Children.Add(new Label { Text = "Для этой статьи пока нет тестов.", TextColor = Colors.Gray });
+                return;
+            }
+
+            foreach (var t in tests)
+            {
+                var local = t;
+                var btn = new Button
+                {
+                    Text = string.IsNullOrWhiteSpace(local.Title) ? "Без названия" : local.Title,
+                    HorizontalOptions = LayoutOptions.Fill,
+                    BackgroundColor = Colors.Transparent,
+                    BorderColor = Colors.Gray
+                };
+                btn.Clicked += async (_, __) =>
+                {
+                    // navigate to TestRunPage by id
+                    await Navigation.PushAsync(new TestRunPage(local.Id));
+                };
+                TestsContainer.Children.Add(btn);
+            }
+        }
+
+        async void OnStartTestClicked(object sender, EventArgs e)
+        {
+            // kept for compatibility if referenced elsewhere; no-op or open first test
+            if (_article == null) return;
+            var tests = await _testsService.GetByArticleIdAsync(_article.Id);
+            var first = tests?.FirstOrDefault();
+            if (first != null)
+                await Navigation.PushAsync(new TestRunPage(first.Id));
+        }
         void RenderArticle(KnowledgeArticle article)
         {
             // Thumbnail
@@ -175,9 +241,5 @@ namespace KnolageTests.Pages
             }
         }
 
-        async void OnStartTestClicked(object sender, EventArgs e)
-        {
-            await DisplayAlert("Тест", "Запуск теста — заглушка.", "OK");
-        }
     }
 }

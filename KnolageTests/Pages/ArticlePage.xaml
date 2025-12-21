@@ -35,13 +35,21 @@
             <VerticalStackLayout x:Name="BlocksContainer" Spacing="10" />
 
             <!-- Tests frame (kept from original page) -->
-            <Frame CornerRadius="8" Padding="12" HasShadow="True" BackgroundColor="Black" Margin="0,8,0,0">
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Тесты по материалу" FontAttributes="Bold" TextColor="White"/>
-                    <Label Text="Здесь будут тесты, проверяющие понимание прочитанного. Это пока заглушка." TextColor="Gray" LineBreakMode="WordWrap" />
-                    <Button Text="Начать тест" Clicked="OnStartTestClicked" />
+            <ScrollView>
+                <VerticalStackLayout Padding="16" Spacing="12">
+                    <Label x:Name="TitleLabel" Text="{Binding Title}" FontSize="22" FontAttributes="Bold" LineBreakMode="WordWrap"/>
+                    <Label x:Name="SubtitleLabel" Text="{Binding Subtitle}" FontSize="16" TextColor="Gray" LineBreakMode="WordWrap"/>
+                    <FlexLayout x:Name="TagsLayout" Wrap="Wrap"/>
+                    <Image x:Name="Thumbnail" Aspect="AspectFit" HeightRequest="160" HorizontalOptions="Center"/>
+                    <VerticalStackLayout x:Name="BlocksStack" Spacing="10"/>
+
+                    <!-- Tests section: populated from code-behind -->
+                    <VerticalStackLayout x:Name="TestsContainer" Spacing="8" Margin="0,8,0,0">
+                        <!-- dynamically filled with Buttons or a Label -->
+                    </VerticalStackLayout>
+
                 </VerticalStackLayout>
-            </Frame>
+            </ScrollView>
 
         </VerticalStackLayout>
     </ScrollView>

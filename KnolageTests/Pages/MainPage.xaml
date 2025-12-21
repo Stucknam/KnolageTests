@@ -33,9 +33,9 @@
                 HorizontalOptions="Fill" />
 
             <Button
-                x:Name="CreateTestsBtn"
-                Text="Создание тестов"
-                Clicked="OnCreateTestsClicked"
+                x:Name="TestsBtn"
+                Text="Тесты"
+                Clicked="OnTestsClicked"
                 HorizontalOptions="Fill" />
 
             <Button

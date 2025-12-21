@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KnolageTests.Pages.TestEditorPage"
+             Title="Test Editor">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <Label Text="Title" FontAttributes="Bold" />
+            <Entry x:Name="TitleEntry" Placeholder="Enter test title" />
+
+            <Label Text="Description" FontAttributes="Bold" />
+            <Editor x:Name="DescriptionEditor" HeightRequest="100" />
+
+            <BoxView HeightRequest="1" BackgroundColor="LightGray" Margin="0,8" />
+
+            <Label Text="Select related articles" FontAttributes="Bold" />
+            <VerticalStackLayout x:Name="ArticlesContainer" Spacing="6" />
+
+            <BoxView HeightRequest="1" BackgroundColor="LightGray" Margin="0,8" />
+
+            <Label Text="Questions" FontAttributes="Bold" />
+            <VerticalStackLayout x:Name="QuestionsContainer" Spacing="8" />
+
+            <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                <Button Text="Add question" Clicked="OnAddQuestionClicked" />
+            </HorizontalStackLayout>
+
+            <BoxView HeightRequest="1" BackgroundColor="LightGray" Margin="0,8" />
+
+            <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
+                <Button Text="Save" Clicked="OnSaveClicked" BackgroundColor="#2196F3" TextColor="White" />
+                <Button Text="Cancel" Clicked="OnCancelClicked" />
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

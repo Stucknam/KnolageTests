@@ -52,20 +52,9 @@ namespace KnolageTests.Pages
                 Application.Current.MainPage = new NavigationPage(page);
         }
 
-        async void OnCreateTestsClicked(object sender, EventArgs e)
+        async void OnTestsClicked(object sender, EventArgs e)
         {
-            var page = new ContentPage
-            {
-                Title = "Создание тестов",
-                Content = new StackLayout
-                {
-                    Padding = 20,
-                    Children =
-                    {
-                        new Label { Text = "Раздел: Создание тестов", HorizontalOptions = LayoutOptions.Center }
-                    }
-                }
-            };
+            var page = new TestsManagePage();
 
             if (Navigation != null)
                 await Navigation.PushAsync(page);
