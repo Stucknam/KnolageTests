@@ -1,16 +1,178 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Graphics;
 using KnolageTests.Models;
+using KnolageTests.Services;
 
 namespace KnolageTests.Pages
 {
     public partial class ArticlePage : ContentPage
     {
-        public ArticlePage(Article article)
+        readonly KnowledgeBaseService _service = new KnowledgeBaseService();
+
+        // Constructor: load by KnowledgeArticle Id
+        public ArticlePage(string articleId)
         {
             InitializeComponent();
-            BindingContext = article ?? throw new ArgumentNullException(nameof(article));
+            _ = LoadByIdAsync(articleId);
+        }
+
+        // Constructor: directly provide KnowledgeArticle
+        public ArticlePage(KnowledgeArticle article)
+        {
+            InitializeComponent();
+            if (article == null) throw new ArgumentNullException(nameof(article));
+            BindingContext = article;
             Title = article.Title;
+            RenderArticle(article);
+        }
+
+        async Task LoadByIdAsync(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                await MainThread.InvokeOnMainThreadAsync(() => DisplayAlert("Ошибка", "Неверный идентификатор статьи.", "OK"));
+                await MainThread.InvokeOnMainThreadAsync(() => Navigation?.PopAsync());
+                return;
+            }
+
+            var article = await _service.GetByIdAsync(id).ConfigureAwait(false);
+            if (article == null)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() => DisplayAlert("Не найдено", "Статья не найдена.", "OK"));
+                await MainThread.InvokeOnMainThreadAsync(() => Navigation?.PopAsync());
+                return;
+            }
+
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                BindingContext = article;
+                Title = article.Title;
+                RenderArticle(article);
+            });
+        }
+
+        void RenderArticle(KnowledgeArticle article)
+        {
+            // Thumbnail
+            if (!string.IsNullOrWhiteSpace(article.ThumbnailPath))
+            {
+                ThumbnailImage.Source = article.ThumbnailPath;
+                ThumbnailImage.IsVisible = true;
+            }
+            else
+            {
+                ThumbnailImage.IsVisible = false;
+            }
+
+            // Tags
+            TagsContainer.Children.Clear();
+            if (article.Tags != null)
+            {
+                foreach (var tag in article.Tags.Where(t => !string.IsNullOrWhiteSpace(t)))
+                {
+                    var chip = new Frame
+                    {
+                        Padding = new Thickness(8, 4),
+                        CornerRadius = 12,
+                        HasShadow = false,
+                        BackgroundColor = Colors.LightGray,
+                        Content = new Label
+                        {
+                            Text = tag,
+                            FontSize = 12,
+                            TextColor = Colors.Black
+                        },
+                        Margin = new Thickness(0, 0, 8, 0)
+                    };
+                    TagsContainer.Children.Add(chip);
+                }
+            }
+
+            // Blocks
+            BlocksContainer.Children.Clear();
+            if (article.Blocks == null || article.Blocks.Count == 0)
+                return;
+
+            foreach (var block in article.Blocks)
+            {
+                switch (block.Type)
+                {
+                    case BlockType.Header:
+                        BlocksContainer.Children.Add(new Label
+                        {
+                            Text = block.Content,
+                            FontSize = 24,
+                            FontAttributes = FontAttributes.Bold,
+                            LineBreakMode = LineBreakMode.WordWrap
+                        });
+                        break;
+
+                    case BlockType.Paragraph:
+                        BlocksContainer.Children.Add(new Label
+                        {
+                            Text = block.Content,
+                            FontSize = 16,
+                            LineBreakMode = LineBreakMode.WordWrap
+                        });
+                        break;
+
+                    case BlockType.Image:
+                        BlocksContainer.Children.Add(new Image
+                        {
+                            Source = block.Content,
+                            Aspect = Aspect.AspectFit,
+                            HeightRequest = 200,
+                            HorizontalOptions = LayoutOptions.Center
+                        });
+                        break;
+
+                    case BlockType.List:
+                        var listStack = new VerticalStackLayout { Spacing = 4, Padding = new Thickness(6, 0) };
+                        var lines = (block.Content ?? string.Empty)
+                                    .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var ln in lines)
+                        {
+                            listStack.Children.Add(new Label
+                            {
+                                Text = "• " + ln.Trim(),
+                                FontSize = 16,
+                                LineBreakMode = LineBreakMode.WordWrap
+                            });
+                        }
+                        BlocksContainer.Children.Add(listStack);
+                        break;
+
+                    case BlockType.Quote:
+                        BlocksContainer.Children.Add(new Frame
+                        {
+                            Padding = 12,
+                            Margin = new Thickness(0, 6),
+                            HasShadow = false,
+                            BackgroundColor = Colors.Transparent,
+                            BorderColor = Colors.Gray,
+                            Content = new Label
+                            {
+                                Text = block.Content,
+                                FontAttributes = FontAttributes.Italic,
+                                LineBreakMode = LineBreakMode.WordWrap
+                            }
+                        });
+                        break;
+
+                    case BlockType.Divider:
+                        BlocksContainer.Children.Add(new BoxView
+                        {
+                            HeightRequest = 1,
+                            BackgroundColor = Colors.Gray,
+                            Margin = new Thickness(0, 8)
+                        });
+                        break;
+                }
+            }
         }
 
         async void OnStartTestClicked(object sender, EventArgs e)

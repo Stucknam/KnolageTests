@@ -15,20 +15,17 @@ namespace KnolageTests.Pages
         {
             InitializeComponent();
 
-            // Найдём элементы из XAML вручную, чтобы избежать ошибок с не сгенерированными полями.
             _articlesCollection = this.FindByName<CollectionView>("ArticlesCollection");
             var searchBar = this.FindByName<SearchBar>("SearchBar");
 
             if (_articlesCollection == null)
             {
-                // Если элемент не найден, кинем понятную исключительную ситуацию — поможет в диагностике.
                 throw new InvalidOperationException("CollectionView with x:Name=\"ArticlesCollection\" not found in XAML.");
             }
 
-            // Привяжем обработчики (если ещё не привязаны в XAML).
-            _articlesCollection.SelectionChanged += OnArticleSelected;
-            if (searchBar != null)
-                searchBar.TextChanged += OnSearchTextChanged;
+            //_articlesCollection.SelectionChanged += OnArticleSelected;
+            //if (searchBar != null)
+            //    searchBar.TextChanged += OnSearchTextChanged;
 
             allArticles = new ObservableCollection<Article>
             {
@@ -45,7 +42,7 @@ namespace KnolageTests.Pages
                     Title = "Создание UI в .NET MAUI",
                     Description = "Адаптивный интерфейс и XAML",
                     Image = "dotnet_bot.png",
-                    Tags = new[] { "MAUI", "UI" },
+                    Tags = new[] { "MAUI", "UI", "Test" },
                     Content = "Полный текст: руководство по созданию интерфейсов в .NET MAUI. Содержит примеры использования Layout, Controls и адаптивных приёмов."
                 },
                 new Article
@@ -83,7 +80,8 @@ namespace KnolageTests.Pages
             var filtered = allArticles
                 .Where(a => (a.Title?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false)
                          || (a.Description?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false)
-                         || (a.Content?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false))
+                         || (a.Content?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false)
+                         || (a.Tags != null && a.Tags.Any(tag => tag?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false)))
                 .ToList();
 
             _articlesCollection.ItemsSource = filtered;
@@ -91,18 +89,18 @@ namespace KnolageTests.Pages
 
         async void OnArticleSelected(object sender, SelectionChangedEventArgs e)
         {
-            if (e.CurrentSelection?.FirstOrDefault() is Article selected)
-            {
-                // очистить выбор, чтобы можно было снова тапнуть на тот же элемент
-                if (sender is CollectionView cv)
-                    cv.SelectedItem = null;
+            //if (e.CurrentSelection?.FirstOrDefault() is Article selected)
+            //{
+            //    // очистить выбор, чтобы можно было снова тапнуть на тот же элемент
+            //    if (sender is CollectionView cv)
+            //        cv.SelectedItem = null;
 
-                var page = new ArticlePage(selected);
-                if (Navigation != null)
-                    await Navigation.PushAsync(page);
-                else
-                    Application.Current.MainPage = new NavigationPage(page);
-            }
+            //    var page = new ArticlePage(selected);
+            //    if (Navigation != null)
+            //        await Navigation.PushAsync(page);
+            //    else
+            //        Application.Current.MainPage = new NavigationPage(page);
+            //}
         }
     }
 }

@@ -13,7 +13,7 @@ namespace KnolageTests.Pages
 
         async void OnKnowledgeClicked(object sender, EventArgs e)
         {
-            var page = new KnowledgePage();
+            var page = new KnowledgeBaseListPage();
 
             if (Navigation != null)
                 await Navigation.PushAsync(page);

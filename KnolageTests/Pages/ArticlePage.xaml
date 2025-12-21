@@ -7,32 +7,40 @@
     <ScrollView>
         <VerticalStackLayout Padding="16" Spacing="12">
 
+            <!-- Thumbnail (hidden when not provided) -->
+            <Image x:Name="ThumbnailImage"
+                   Source="{Binding ThumbnailPath}"
+                   Aspect="AspectFit"
+                   HeightRequest="180"
+                   HorizontalOptions="Center"
+                   IsVisible="False" />
+
+            <!-- Title and subtitle -->
             <Label Text="{Binding Title}"
-                   FontSize="22"
+                   FontSize="26"
                    FontAttributes="Bold"
                    LineBreakMode="WordWrap" />
 
-            <Label Text="{Binding Description}"
+            <Label Text="{Binding Subtitle}"
                    FontSize="16"
                    TextColor="Gray"
                    LineBreakMode="WordWrap" />
 
-            <Image Source="{Binding Image}"
-                   Aspect="AspectFit"
-                   HeightRequest="160"
-                   HorizontalOptions="Center" />
+            <!-- Tags -->
+            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                <HorizontalStackLayout x:Name="TagsContainer" Spacing="8" Padding="0,4,0,0" />
+            </ScrollView>
 
-            <Label Text="{Binding Content}"
-                   FontSize="14"
-                   LineBreakMode="WordWrap" />
+            <!-- Blocks rendered dynamically -->
+            <VerticalStackLayout x:Name="BlocksContainer" Spacing="10" />
 
-            
+            <!-- Tests frame (kept from original page) -->
             <Frame CornerRadius="8" Padding="12" HasShadow="True" BackgroundColor="Black" Margin="0,8,0,0">
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="Тесты по материалу" FontAttributes="Bold" />
-					<Label Text="Здесь будут тесты, проверяющие понимание прочитанного. Это пока заглушка." TextColor="Gray" LineBreakMode="WordWrap" />
-					<Button Text="Начать тест" Clicked="OnStartTestClicked" />
-				</VerticalStackLayout>
+                    <Label Text="Тесты по материалу" FontAttributes="Bold" TextColor="White"/>
+                    <Label Text="Здесь будут тесты, проверяющие понимание прочитанного. Это пока заглушка." TextColor="Gray" LineBreakMode="WordWrap" />
+                    <Button Text="Начать тест" Clicked="OnStartTestClicked" />
+                </VerticalStackLayout>
             </Frame>
 
         </VerticalStackLayout>
