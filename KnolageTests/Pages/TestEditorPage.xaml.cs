@@ -106,7 +106,9 @@ namespace KnolageTests.Pages
                 {
                     IsChecked = _selectedArticleIds.Contains(a.Id),
                     VerticalOptions = LayoutOptions.Center,
-                    BindingContext = a
+                    BindingContext = a,
+                    Color = (Color)Application.Current.Resources["PrimaryColor"]
+
                 };
                 chk.CheckedChanged += OnArticleCheckedChanged;
 
@@ -166,7 +168,9 @@ namespace KnolageTests.Pages
                     Padding = 8,
                     CornerRadius = 6,
                     HasShadow = false,
-                    Content = new VerticalStackLayout { Spacing = 8 }
+                    Content = new VerticalStackLayout { Spacing = 8 },
+                    BackgroundColor = (Color)Application.Current.Resources["SurfaceColor"]
+
                 };
 
                 var v = (VerticalStackLayout)qContainer.Content;
@@ -174,7 +178,7 @@ namespace KnolageTests.Pages
                 var qEntry = new Entry
                 {
                     Text = question.Text,
-                    Placeholder = "Question text"
+                    Placeholder = "Текст вопроса"
                 };
                 qEntry.TextChanged += (s, e) => question.Text = e.NewTextValue ?? string.Empty;
                 v.Children.Add(qEntry);
@@ -187,12 +191,22 @@ namespace KnolageTests.Pages
                 {
                     var option = question.Options[oIdx];
 
-                    var optRow = new HorizontalStackLayout { Spacing = 8 };
+                    var optRow = new Grid
+                    {
+                        ColumnDefinitions =
+                    {
+                        new ColumnDefinition { Width = GridLength.Star },   // Entry растягивается
+                        new ColumnDefinition { Width = GridLength.Auto },   // CheckBox
+                        new ColumnDefinition { Width = GridLength.Auto }    // Delete button
+                    },
+                        ColumnSpacing = 8
+                    };
 
                     var optEntry = new Entry
                     {
                         Text = option.Text,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
+                        HorizontalOptions = LayoutOptions.Fill
+                        
                     };
                     optEntry.TextChanged += (s, e) => option.Text = e.NewTextValue ?? string.Empty;
 
@@ -205,10 +219,13 @@ namespace KnolageTests.Pages
 
                     var delOpt = new Button
                     {
-                        Text = "Delete option",
-                        BackgroundColor = Colors.IndianRed,
+                        ImageSource = "ic_fluent_backspace_24_filled.png",
+                        HeightRequest = 40,
+                        WidthRequest = 40,
+                        BackgroundColor = (Color)Application.Current.Resources["ErrorColor"],
                         TextColor = Colors.White,
-                        WidthRequest = 110
+                        HorizontalOptions = LayoutOptions.End
+                        
                     };
                     delOpt.Clicked += (_, __) =>
                     {
@@ -216,9 +233,10 @@ namespace KnolageTests.Pages
                         RenderQuestions();
                     };
 
-                    optRow.Children.Add(optEntry);
-                    optRow.Children.Add(isCorrect);
-                    optRow.Children.Add(delOpt);
+                    optRow.Add(optEntry, 0, 0);
+                    optRow.Add(isCorrect, 1, 0);
+                    optRow.Add(delOpt, 2, 0);
+
 
                     optsContainer.Children.Add(optRow);
                 }
@@ -226,13 +244,13 @@ namespace KnolageTests.Pages
                 v.Children.Add(optsContainer);
 
                 var optsActions = new HorizontalStackLayout { Spacing = 8 };
-                var addOptBtn = new Button { Text = "Add option" };
+                var addOptBtn = new Button { ImageSource = "ic_fluent_add_circle_24_filled.png", Text = "Добавить ответ", TextColor=Colors.White, BackgroundColor = (Color)Application.Current.Resources["PrimaryColor"], HeightRequest = 40};
                 addOptBtn.Clicked += (_, __) =>
                 {
                     question.Options.Add(new TestAnswerOption());
                     RenderQuestions();
                 };
-                var delQBtn = new Button { Text = "Delete question", BackgroundColor = Colors.IndianRed, TextColor = Colors.White };
+                var delQBtn = new Button { Text = "Удалить вопрос", BackgroundColor = (Color)Application.Current.Resources["ErrorColor"], TextColor = Colors.White, HeightRequest = 40 };
                 delQBtn.Clicked += (_, __) =>
                 {
                     _test.Questions.Remove(question);
@@ -262,7 +280,7 @@ namespace KnolageTests.Pages
             var title = TitleEntry.Text?.Trim();
             if (string.IsNullOrWhiteSpace(title))
             {
-                await DisplayAlert("Validation", "Title cannot be empty.", "OK");
+                await DisplayAlert("Ошибка", "Заголовок не может быть пустым.", "OK");
                 return;
             }
 
@@ -297,7 +315,7 @@ namespace KnolageTests.Pages
                 await _testsService.SaveAsync(_test).ConfigureAwait(false);
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    await DisplayAlert("Saved", "Test saved successfully.", "OK");
+                    await DisplayAlert("Сохранено", "Тест успешно сохранён.", "OK");
                     await Navigation.PopAsync();
                 });
             }
@@ -305,7 +323,7 @@ namespace KnolageTests.Pages
             {
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    await DisplayAlert("Error", $"Failed to save: {ex.Message}", "OK");
+                    await DisplayAlert("Ошибка", $"Failed to save: {ex.Message}", "OK");
                 });
             }
         }

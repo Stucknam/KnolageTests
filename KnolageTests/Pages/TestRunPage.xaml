@@ -2,57 +2,99 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KnolageTests.Pages.TestRunPage"
-             Title="����">
+             Title="Тест"
+             BackgroundColor="{StaticResource BackgroundColor}">
 
-    <Grid Padding="12" RowSpacing="8">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+	<Grid Padding="12"
+          RowSpacing="12"
+          ColumnSpacing="0"
+          VerticalOptions="FillAndExpand">
 
-        <VerticalStackLayout Grid.Row="0" Spacing="4">
-            <Label x:Name="TitleLabel" FontSize="20" FontAttributes="Bold" LineBreakMode="WordWrap"/>
-            <Label x:Name="DescriptionLabel" FontSize="14" TextColor="Gray" LineBreakMode="WordWrap"/>
-        </VerticalStackLayout>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
 
-        <CollectionView x:Name="QuestionsCollection"
-                        Grid.Row="1"
-                        ItemsLayout="VerticalList"
-                        SelectionMode="None"
-                        VerticalOptions="FillAndExpand">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame CornerRadius="6" Padding="10" Margin="0,6" HasShadow="True">
-                        <VerticalStackLayout Spacing="8">
-                            <Label Text="{Binding Text}" FontAttributes="Bold" LineBreakMode="WordWrap" />
+		<!-- Заголовок и описание -->
+		<VerticalStackLayout Grid.Row="0"
+                             Spacing="4">
+			<Label x:Name="TitleLabel"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   LineBreakMode="WordWrap" />
 
-                            <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding Options}">
-                                <BindableLayout.ItemTemplate>
-                                    <DataTemplate>
-                                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
-                                            <CheckBox CheckedChanged="OnOptionCheckedChanged" />
-                                            <Label Text="{Binding Text}" LineBreakMode="WordWrap" VerticalOptions="Center"/>
-                                        </HorizontalStackLayout>
-                                    </DataTemplate>
-                                </BindableLayout.ItemTemplate>
-                            </VerticalStackLayout>
-                        </VerticalStackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+			<Label x:Name="DescriptionLabel"
+                   FontSize="14"
+                   TextColor="Gray"
+                   LineBreakMode="WordWrap" />
+		</VerticalStackLayout>
 
-            <CollectionView.EmptyView>
-                <Label Text="�������� ���" HorizontalOptions="Center" VerticalOptions="Center" TextColor="Gray"/>
-            </CollectionView.EmptyView>
-        </CollectionView>
+		<!-- Вопросы -->
+		<CollectionView x:Name="QuestionsCollection"
+                Grid.Row="1"
+                SelectionMode="None"
+                VerticalOptions="FillAndExpand"
+                >
 
-        <Button Grid.Row="2"
+			<CollectionView.ItemsLayout>
+				<LinearItemsLayout Orientation="Vertical"
+								   ItemSpacing="8" />
+				<!-- расстояние между вопросами -->
+			</CollectionView.ItemsLayout>
+
+			<CollectionView.ItemTemplate>
+				<DataTemplate>
+					<Frame CornerRadius="8"
+						   Padding="14"
+						   HasShadow="True"
+						   BackgroundColor="{StaticResource SurfaceColor}">
+
+						<VerticalStackLayout Spacing="12">
+
+							<Label Text="{Binding Text}"
+								   FontAttributes="Bold"
+								   FontSize="16"
+								   TextColor="White"
+								   LineBreakMode="WordWrap" />
+
+							<VerticalStackLayout Spacing="8"
+												 BindableLayout.ItemsSource="{Binding Options}">
+								<BindableLayout.ItemTemplate>
+									<DataTemplate>
+										<HorizontalStackLayout
+															   Padding="0,4"
+															   VerticalOptions="Center">
+
+											<CheckBox CheckedChanged="OnOptionCheckedChanged"
+													  VerticalOptions="Center"/>
+
+											<Label Text="{Binding Text}"
+												   TextColor="White"
+												   LineBreakMode="WordWrap"
+												   VerticalOptions="Center"/>
+										</HorizontalStackLayout>
+									</DataTemplate>
+								</BindableLayout.ItemTemplate>
+							</VerticalStackLayout>
+
+						</VerticalStackLayout>
+
+					</Frame>
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+
+		</CollectionView>
+
+		<!-- Кнопка проверки -->
+		<Button Grid.Row="2"
                 x:Name="CheckResultButton"
-                Text="Check result"
-                BackgroundColor="#2196F3"
+                Text="Проверить результат"
+                BackgroundColor="{StaticResource PrimaryColor}"
                 TextColor="White"
-                Clicked="OnCheckResultClicked"
-                HorizontalOptions="Fill" />
-    </Grid>
+                HeightRequest="44"
+                HorizontalOptions="Fill"
+                Clicked="OnCheckResultClicked" />
+	</Grid>
 </ContentPage>

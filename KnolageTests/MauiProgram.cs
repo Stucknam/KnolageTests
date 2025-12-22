@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using MauiIcons.Fluent;
 
 namespace KnolageTests
 {
@@ -13,11 +14,12 @@ namespace KnolageTests
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                    
+                   
                 });
+            builder.UseMauiApp<App>().UseFluentMauiIcons();
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

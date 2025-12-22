@@ -4,7 +4,7 @@
              x:Class="KnolageTests.Controls.ArticleCard"
              x:Name="Root">
 
-    <Frame CornerRadius="8" Padding="10" Margin="0,6" HasShadow="True" Background="DarkSlateBlue">
+    <Frame CornerRadius="8" Padding="10" Margin="0,6" HasShadow="True" BackgroundColor="{StaticResource SurfaceColor}">
         <!-- FlexLayout with Wrap so content flows on small widths:
              - Image has fixed basis (square) and won't shrink below its size.
              - Content block has Grow=1 and MinWidthRequest=0 so it can compress and wrap text.
@@ -48,7 +48,6 @@
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>
                 </FlexLayout>
-
             </VerticalStackLayout>
         </FlexLayout>
     </Frame>

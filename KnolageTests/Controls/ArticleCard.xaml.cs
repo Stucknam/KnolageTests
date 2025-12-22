@@ -45,5 +45,7 @@ namespace KnolageTests.Controls
             get => (IEnumerable<string>)GetValue(TagsProperty);
             set => SetValue(TagsProperty, value);
         }
+
+
     }
 }

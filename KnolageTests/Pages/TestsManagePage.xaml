@@ -2,28 +2,31 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KnolageTests.Pages.TestsManagePage"
-             Title="Управление тестами">
+             Title="Управление тестами"
+             BackgroundColor="{StaticResource BackgroundColor}">
 
-    <VerticalStackLayout Padding="12" Spacing="8">
+    <Grid RowDefinitions="Auto,Auto,*" Padding="12" >
 
         <SearchBar x:Name="SearchBar"
                    Placeholder="Поиск тестов по названию или описанию..."
-                   TextChanged="OnSearchTextChanged" />
+                   TextChanged="OnSearchTextChanged"
+                   Grid.Row="0"/>
 
-        <HorizontalStackLayout Spacing="8">
-            <Button Text="Create test" Clicked="OnCreateClicked" HorizontalOptions="Start" />
-            <Button Text="Refresh" Clicked="OnRefreshClicked" HorizontalOptions="EndAndExpand" />
+        <HorizontalStackLayout Spacing="8" Grid.Row="1" Margin="6,6">
+            <Button ImageSource="ic_fluent_add_circle_24_filled.png" HeightRequest="40" BackgroundColor="{StaticResource PrimaryColor}" Clicked="OnCreateClicked" HorizontalOptions="Start" />
+            <Button ImageSource="ic_fluent_arrow_sync_24_filled.png" HeightRequest="40" BackgroundColor="{StaticResource SecondaryColor}" Clicked="OnRefreshClicked" HorizontalOptions="EndAndExpand" />
         </HorizontalStackLayout>
 
         <CollectionView x:Name="ManageCollectionView"
                         ItemsLayout="VerticalList"
                         SelectionMode="None"
-                        EmptyView="Тестов пока нет">
+                        EmptyView="Тестов пока нет"
+                        Grid.Row="2">
             
             <CollectionView.ItemTemplate >
                 <DataTemplate>
-                    <Grid Margin="0,0,0,6">
-                        <Frame CornerRadius="6" Padding="8" Margin="0,0,0,12" HasShadow="True" Background="DarkSlateBlue">
+                    <Grid Margin="0,0,0,6" >
+                        <Frame CornerRadius="6" Padding="8" Margin="0,0,0,12" HasShadow="True" BackgroundColor="{StaticResource SurfaceColor}">
                             <VerticalStackLayout Spacing="10">
                                 <VerticalStackLayout Spacing="4" HorizontalOptions="FillAndExpand" >
                                     <Label Text="{Binding Test.Title}" FontAttributes="Bold" LineBreakMode="WordWrap" />
@@ -42,8 +45,8 @@
                                 </VerticalStackLayout>
 
                                 <HorizontalStackLayout Spacing="6" HorizontalOptions="Start">
-                                    <Button Text="Edit" Clicked="OnEditClicked" CommandParameter="{Binding Test}" WidthRequest="80" />
-                                    <Button Text="Delete" BackgroundColor="IndianRed" TextColor="White" Clicked="OnDeleteClicked" CommandParameter="{Binding Test}" WidthRequest="80" />
+                                    <Button ImageSource="ic_fluent_edit_24_filled.png" HeightRequest="40" Text="Редактировать" BackgroundColor="{StaticResource PrimaryColor}" TextColor="White" Clicked="OnEditClicked" CommandParameter="{Binding Test}" />
+                                    <Button ImageSource="ic_fluent_delete_24_filled.png" HeightRequest="40" Text="Удалить" BackgroundColor="{StaticResource ErrorColor}" TextColor="White" Clicked="OnDeleteClicked" CommandParameter="{Binding Test}" />
                                 </HorizontalStackLayout>
                             </VerticalStackLayout>
                         </Frame>
@@ -52,5 +55,5 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>

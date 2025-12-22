@@ -3,15 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:KnolageTests.Controls"
              x:Class="KnolageTests.Pages.KnowledgeBaseListPage"
-             Title="База знаний">
+             Title="База знаний"
+             BackgroundColor="{StaticResource BackgroundColor}">
 
-    <VerticalStackLayout Padding="12" Spacing="10">
+    <Grid RowDefinitions="Auto,Auto,*"  Padding="12">
 
         <SearchBar x:Name="SearchBar"
-                   Placeholder="Search by title, subtitle, tags or text..."
-                   TextChanged="OnSearchTextChanged" />
+                   Placeholder="Поиск по заголовку, тэгам или содержанию..."
+                   TextChanged="OnSearchTextChanged"
+                   Grid.Row="0"/>
 
-        <HorizontalStackLayout Spacing="8" HorizontalOptions="Fill">
+        <HorizontalStackLayout Spacing="8" HorizontalOptions="Fill" Grid.Row="1">
             <!--<Button Text="Create Article" Clicked="OnCreateArticleClicked" HorizontalOptions="Start" />-->
             <!--<Button Text="Refresh" Clicked="OnRefreshClicked" HorizontalOptions="EndAndExpand" />-->
         </HorizontalStackLayout>
@@ -20,11 +22,14 @@
                         SelectionMode="Single"
                         SelectionChanged="OnSelectionChanged"
                         EmptyView="No articles yet"
-                        ItemsLayout="VerticalList">
+                        ItemsLayout="VerticalList"
+                        Grid.Row="2"
+                        >
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="0,0,0,6">
+                    <Grid Margin="0,0,0,6" >
                         <controls:ArticleCard
+                            InputTransparent="True"
                             Title="{Binding Title}"
                             Description="{Binding Subtitle}"
                             ImageSource="{Binding ThumbnailPath}"
@@ -34,5 +39,5 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>

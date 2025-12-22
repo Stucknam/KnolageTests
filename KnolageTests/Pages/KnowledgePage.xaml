@@ -5,11 +5,7 @@
              x:Class="KnolageTests.Pages.KnowledgePage"
              Title="База знаний">
 
-    <Grid Padding="16" RowSpacing="12">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Grid RowDefinitions="Auto,Auto,*"  Padding="12">
 
         <SearchBar
             x:Name="SearchBar"

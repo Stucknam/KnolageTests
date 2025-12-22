@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
+using MauiIcons.Fluent;
 using KnolageTests.Models;
 using KnolageTests.Services;
 
@@ -44,7 +45,7 @@ namespace KnolageTests.Pages
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                await DisplayAlert("Error", "Invalid article id", "OK");
+                await DisplayAlert("Ошибка", "Invalid article id", "OK");
                 await Navigation.PopAsync();
                 return;
             }
@@ -54,7 +55,7 @@ namespace KnolageTests.Pages
             {
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    await DisplayAlert("Not found", "Article not found", "OK");
+                    await DisplayAlert("Не найдено", "Статья не найдена", "OK");
                     await Navigation.PopAsync();
                 });
                 return;
@@ -74,7 +75,7 @@ namespace KnolageTests.Pages
             SubtitleEntry.Text = _article.Subtitle;
             ThumbnailEntry.Text = _article.ThumbnailPath;
             TagsEntry.Text = _article.Tags != null ? string.Join(", ", _article.Tags) : string.Empty;
-            Title = string.IsNullOrWhiteSpace(_article.Title) ? "New Article" : _article.Title;
+            Title = string.IsNullOrWhiteSpace(_article.Title) ? "Новая статья" : _article.Title;
         }
 
         void RenderBlocks()
@@ -122,10 +123,10 @@ namespace KnolageTests.Pages
                         var h = new HorizontalStackLayout { Spacing = 8 };
                         var pathEntry = new Entry { Text = block.Content, HorizontalOptions = LayoutOptions.FillAndExpand };
                         pathEntry.TextChanged += (s, e) => block.Content = e.NewTextValue ?? string.Empty;
-                        var pickBtn = new Button { Text = "Pick" };
+                        var pickBtn = new Button { Text = "Выбрать" };
                         pickBtn.Clicked += async (_, __) =>
                         {
-                            var fr = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Select image" }).ConfigureAwait(false);
+                            var fr = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Выбрать фото" }).ConfigureAwait(false);
                             if (fr != null)
                             {
                                 var path = fr.FullPath ?? fr.FileName;
@@ -139,22 +140,22 @@ namespace KnolageTests.Pages
                         break;
 
                     case BlockType.Divider:
-                        v.Children.Add(new Label { Text = "— Divider —", HorizontalOptions = LayoutOptions.Center, TextColor = Colors.Gray });
+                        v.Children.Add(new Label { Text = "— Разделитель —", HorizontalOptions = LayoutOptions.Center, TextColor = Colors.Gray });
                         break;
                 }
 
                 // action buttons
                 var actions = new HorizontalStackLayout { Spacing = 8 };
 
-                var up = new Button { Text = "Поднять выше", WidthRequest = 40, HeightRequest = 36 };
+                var up = new Button { ImageSource = "ic_fluent_arrow_sort_up_24_filled.png", BackgroundColor = (Color)Application.Current.Resources["PrimaryColor"] ,  WidthRequest = 40, HeightRequest = 36 };
                 up.Clicked += (_, __) => MoveBlockUp(idx);
                 actions.Children.Add(up);
 
-                var down = new Button { Text = "Опустить ниже", WidthRequest = 40, HeightRequest = 36 };
+                var down = new Button { ImageSource = "ic_fluent_arrow_sort_down_24_filled.png", BackgroundColor = (Color)Application.Current.Resources["PrimaryColor"],  WidthRequest = 40, HeightRequest = 36 };
                 down.Clicked += (_, __) => MoveBlockDown(idx);
                 actions.Children.Add(down);
 
-                var del = new Button { Text = "Delete", BackgroundColor = Colors.IndianRed, TextColor = Colors.White };
+                var del = new Button { ImageSource = "ic_fluent_delete_24_filled.png", HeightRequest = 36, BackgroundColor = Colors.IndianRed, TextColor = Colors.White };
                 del.Clicked += (_, __) => DeleteBlock(idx);
                 actions.Children.Add(del);
 
@@ -200,20 +201,20 @@ namespace KnolageTests.Pages
         async void OnAddBlockClicked(object sender, EventArgs e)
         {
             // Cross-platform action sheet to present block types
-            var choice = await DisplayActionSheet("Add Block", "Cancel", null,
-                "Header", "Paragraph", "Image", "List", "Quote", "Divider");
+            var choice = await DisplayActionSheet("Добавить блок", "Отмена", null,
+                "Заголовок", "Абзац", "Изображение", "Список", "Цитата", "Разделитель");
 
-            if (choice == "Header")
+            if (choice == "Заголовок")
                 OnAddHeaderClicked(sender, EventArgs.Empty);
-            else if (choice == "Paragraph")
+            else if (choice == "Абзац")
                 OnAddParagraphClicked(sender, EventArgs.Empty);
-            else if (choice == "Image")
+            else if (choice == "Изображение")
                 OnAddImageClicked(sender, EventArgs.Empty);
-            else if (choice == "List")
+            else if (choice == "Список")
                 OnAddListClicked(sender, EventArgs.Empty);
-            else if (choice == "Quote")
+            else if (choice == "Цитата")
                 OnAddQuoteClicked(sender, EventArgs.Empty);
-            else if (choice == "Divider")
+            else if (choice == "Разделитель")
                 OnAddDividerClicked(sender, EventArgs.Empty);
             // Cancel or null -> do nothing
         }
@@ -229,7 +230,7 @@ namespace KnolageTests.Pages
         {
             try
             {
-                var fr = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Select thumbnail" }).ConfigureAwait(false);
+                var fr = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Выберите изобажение" }).ConfigureAwait(false);
                 if (fr != null)
                 {
                     var path = fr.FullPath ?? fr.FileName;
@@ -248,7 +249,7 @@ namespace KnolageTests.Pages
             var title = TitleEntry.Text?.Trim();
             if (string.IsNullOrWhiteSpace(title))
             {
-                await DisplayAlert("Validation", "Title cannot be empty.", "OK");
+                await DisplayAlert("Ошибка", "Заголовок не должен быть пустым.", "OK");
                 return;
             }
 
@@ -272,7 +273,7 @@ namespace KnolageTests.Pages
                 await _service.SaveAsync(_article).ConfigureAwait(false);
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    await DisplayAlert("Saved", "Article saved successfully.", "OK");
+                    await DisplayAlert("Сохрнено", "Статья успешно сохранена.", "OK");
                     await Navigation.PopAsync();
                 });
             }
@@ -280,7 +281,7 @@ namespace KnolageTests.Pages
             {
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    await DisplayAlert("Error", $"Failed to save: {ex.Message}", "OK");
+                    await DisplayAlert("Ошибка", $"Не удалось сохранить: {ex.Message}", "OK");
                 });
             }
         }

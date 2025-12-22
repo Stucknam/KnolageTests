@@ -3,25 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:KnolageTests.Controls"
              x:Class="KnolageTests.Pages.KnowledgeBaseManagePage"
-             Title="Управление статьями">
+             Title="Управление статьями"
+             BackgroundColor="{StaticResource BackgroundColor}">
 
-    <VerticalStackLayout Padding="12" Spacing="8">
+    <Grid RowDefinitions="Auto,Auto,*"  Padding="12">
 
         <SearchBar
+		Margin ="0,0,0,12"
         x:Name="SearchBar"
         Placeholder="Поиск..."
         TextChanged="OnSearchTextChanged"
         Grid.Row="0" />
 
-        <HorizontalStackLayout Spacing="8">
-            <Button Text="Refresh" Clicked="OnRefreshClicked" HorizontalOptions="Start" />
-            <Button Text="Create Article" Clicked="OnCreateClicked" HorizontalOptions="EndAndExpand" />
+        <HorizontalStackLayout Grid.Row="1" Spacing="8">
+            <Button ImageSource="ic_fluent_add_circle_24_filled.png" HeightRequest="40" Clicked="OnCreateClicked" HorizontalOptions="EndAndExpand" BackgroundColor="{StaticResource PrimaryColor}" />
+            <Button ImageSource="ic_fluent_arrow_sync_24_filled.png" HeightRequest="40" Clicked="OnRefreshClicked" HorizontalOptions="Start" BackgroundColor="{StaticResource PrimaryVariantColor}" />
         </HorizontalStackLayout>
-
         <CollectionView x:Name="ManageCollectionView"
                         ItemsLayout="VerticalList"
                         SelectionMode="None"
-                        EmptyView="No articles found">
+                        EmptyView="Статьи не найдены."
+						Grid.Row="2">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <VerticalStackLayout Padding="8" Spacing="10">
@@ -30,17 +32,16 @@
                             Description="{Binding Subtitle}"
                             ImageSource="{Binding ThumbnailPath}"
                             Tags="{Binding Tags}"
-                            HorizontalOptions="FillAndExpand" />
+                            />
                             <HorizontalStackLayout x:Name="actions"
                                                 Spacing="10">
-                                <Button Text="Edit"
-                                        WidthRequest="80"
+                                <Button ImageSource="ic_fluent_edit_24_filled.png" HeightRequest="40" Text="Редактировать" TextColor="White"
                                         CommandParameter="{Binding .}"
-                                        Clicked="OnEditClicked" />
+                                        Clicked="OnEditClicked"
+                                        BackgroundColor="{StaticResource PrimaryColor}"/>
 
-                                <Button Text="Delete"
-                                        WidthRequest="80"
-                                        BackgroundColor="IndianRed"
+                                <Button ImageSource="ic_fluent_delete_24_filled.png" HeightRequest="40" Text="Удалить"
+                                        BackgroundColor="{StaticResource ErrorColor}}"
                                         TextColor="White"
                                         CommandParameter="{Binding .}"
                                         Clicked="OnDeleteClicked" />
@@ -50,5 +51,5 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>
