@@ -100,7 +100,7 @@ namespace KnolageTests.Pages
                 {
                     Text = string.IsNullOrWhiteSpace(local.Title) ? "Без названия" : local.Title,
                     HorizontalOptions = LayoutOptions.Fill,
-                    BackgroundColor = Colors.Transparent,
+                    BackgroundColor = Colors.AliceBlue,
                     BorderColor = Colors.Gray
                 };
                 btn.Clicked += async (_, __) =>

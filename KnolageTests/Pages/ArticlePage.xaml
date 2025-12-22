@@ -37,11 +37,11 @@
             <!-- Tests frame (kept from original page) -->
             <ScrollView>
                 <VerticalStackLayout Padding="16" Spacing="12">
-                    <Label x:Name="TitleLabel" Text="{Binding Title}" FontSize="22" FontAttributes="Bold" LineBreakMode="WordWrap"/>
+                    <!--<Label x:Name="TitleLabel" Text="{Binding Title}" FontSize="22" FontAttributes="Bold" LineBreakMode="WordWrap"/>
                     <Label x:Name="SubtitleLabel" Text="{Binding Subtitle}" FontSize="16" TextColor="Gray" LineBreakMode="WordWrap"/>
                     <FlexLayout x:Name="TagsLayout" Wrap="Wrap"/>
                     <Image x:Name="Thumbnail" Aspect="AspectFit" HeightRequest="160" HorizontalOptions="Center"/>
-                    <VerticalStackLayout x:Name="BlocksStack" Spacing="10"/>
+                    <VerticalStackLayout x:Name="BlocksStack" Spacing="10"/>-->
 
                     <!-- Tests section: populated from code-behind -->
                     <VerticalStackLayout x:Name="TestsContainer" Spacing="8" Margin="0,8,0,0">

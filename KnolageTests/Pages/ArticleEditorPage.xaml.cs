@@ -197,6 +197,27 @@ namespace KnolageTests.Pages
             RenderBlocks();
         }
 
+        async void OnAddBlockClicked(object sender, EventArgs e)
+        {
+            // Cross-platform action sheet to present block types
+            var choice = await DisplayActionSheet("Add Block", "Cancel", null,
+                "Header", "Paragraph", "Image", "List", "Quote", "Divider");
+
+            if (choice == "Header")
+                OnAddHeaderClicked(sender, EventArgs.Empty);
+            else if (choice == "Paragraph")
+                OnAddParagraphClicked(sender, EventArgs.Empty);
+            else if (choice == "Image")
+                OnAddImageClicked(sender, EventArgs.Empty);
+            else if (choice == "List")
+                OnAddListClicked(sender, EventArgs.Empty);
+            else if (choice == "Quote")
+                OnAddQuoteClicked(sender, EventArgs.Empty);
+            else if (choice == "Divider")
+                OnAddDividerClicked(sender, EventArgs.Empty);
+            // Cancel or null -> do nothing
+        }
+
         void OnAddHeaderClicked(object sender, EventArgs e) => AddBlock(BlockType.Header);
         void OnAddParagraphClicked(object sender, EventArgs e) => AddBlock(BlockType.Paragraph);
         void OnAddImageClicked(object sender, EventArgs e) => AddBlock(BlockType.Image);
