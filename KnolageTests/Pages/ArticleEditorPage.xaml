@@ -23,7 +23,7 @@
             <Label Text="Тэги (Через запятую)" FontAttributes="Bold" />
             <Entry x:Name="TagsEntry" Placeholder="tag1, tag2, tag3" />
 
-            <BoxView HeightRequest="1" BackgroundColor="LightGray" Margin="0,8" />
+            <BoxView HeightRequest="1" Margin="0,8" />
 
             <Label Text="Блоки" FontAttributes="Bold" />
             <VerticalStackLayout x:Name="BlocksContainer" Spacing="8" />
@@ -34,7 +34,7 @@
                     Clicked="OnAddBlockClicked"
                     BackgroundColor="{StaticResource PrimaryColor}" />
 
-            <BoxView HeightRequest="1" BackgroundColor="LightGray" Margin="0,8" />
+            <BoxView HeightRequest="1" Margin="0,8" />
 
             <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
                 <Button ImageSource="ic_fluent_save_24_filled.png"

@@ -101,6 +101,7 @@ namespace KnolageTests.Pages
                     Text = string.IsNullOrWhiteSpace(local.Title) ? "Без названия" : local.Title,
                     HorizontalOptions = LayoutOptions.Fill,
                     BackgroundColor = (Color)Application.Current.Resources["PrimaryColor"],
+                    TextColor = (Color)Application.Current.Resources["TextPrimaryColor"]
                 };
                 btn.Clicked += async (_, __) =>
                 {

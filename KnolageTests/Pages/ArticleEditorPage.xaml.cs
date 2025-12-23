@@ -93,7 +93,8 @@ namespace KnolageTests.Pages
                     Padding = 8,
                     CornerRadius = 6,
                     HasShadow = false,
-                    Content = new VerticalStackLayout { Spacing = 6 }
+                    Content = new VerticalStackLayout { Spacing = 6 },
+                    BackgroundColor = (Color)Application.Current.Resources["SurfaceColor"]
                 };
 
                 var v = (VerticalStackLayout)container.Content;
@@ -126,12 +127,37 @@ namespace KnolageTests.Pages
                         var pickBtn = new Button { Text = "Выбрать" };
                         pickBtn.Clicked += async (_, __) =>
                         {
-                            var fr = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Выбрать фото" }).ConfigureAwait(false);
+                            var fr = await FilePicker.PickAsync(new PickOptions
+                            {
+                                PickerTitle = "Выберите изображение"
+                            }).ConfigureAwait(false);
+
                             if (fr != null)
                             {
-                                var path = fr.FullPath ?? fr.FileName;
-                                block.Content = path;
-                                await MainThread.InvokeOnMainThreadAsync(() => pathEntry.Text = path);
+                                // Папка приложения
+                                var appFolder = FileSystem.AppDataDirectory;
+
+                                // Имя файла
+                                var fileName = Path.GetFileName(fr.FullPath ?? fr.FileName);
+
+                                // Путь назначения
+                                var destinationPath = Path.Combine(appFolder, fileName);
+
+                                // Копирование файла
+                                using (var sourceStream = await fr.OpenReadAsync())
+                                using (var destinationStream = File.OpenWrite(destinationPath))
+                                {
+                                    await sourceStream.CopyToAsync(destinationStream);
+                                }
+
+                                // Сохраняем путь к локальной копии
+                                _article.ThumbnailPath = destinationPath;
+
+                                // Обновляем UI
+                                await MainThread.InvokeOnMainThreadAsync(() =>
+                                {
+                                    ThumbnailEntry.Text = destinationPath;
+                                });
                             }
                         };
                         h.Children.Add(pathEntry);
@@ -230,12 +256,37 @@ namespace KnolageTests.Pages
         {
             try
             {
-                var fr = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Выберите изобажение" }).ConfigureAwait(false);
+                var fr = await FilePicker.PickAsync(new PickOptions
+                {
+                    PickerTitle = "Выберите изображение"
+                }).ConfigureAwait(false);
+
                 if (fr != null)
                 {
-                    var path = fr.FullPath ?? fr.FileName;
-                    _article.ThumbnailPath = path;
-                    await MainThread.InvokeOnMainThreadAsync(() => ThumbnailEntry.Text = path);
+                    // Папка приложения
+                    var appFolder = FileSystem.AppDataDirectory;
+
+                    // Имя файла
+                    var fileName = Path.GetFileName(fr.FullPath ?? fr.FileName);
+
+                    // Путь назначения
+                    var destinationPath = Path.Combine(appFolder, fileName);
+
+                    // Копирование файла
+                    using (var sourceStream = await fr.OpenReadAsync())
+                    using (var destinationStream = File.OpenWrite(destinationPath))
+                    {
+                        await sourceStream.CopyToAsync(destinationStream);
+                    }
+
+                    // Сохраняем путь к локальной копии
+                    _article.ThumbnailPath = destinationPath;
+
+                    // Обновляем UI
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        ThumbnailEntry.Text = destinationPath;
+                    });
                 }
             }
             catch

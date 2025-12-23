@@ -68,7 +68,8 @@
 															   VerticalOptions="Center">
 
 											<CheckBox CheckedChanged="OnOptionCheckedChanged"
-													  VerticalOptions="Center"/>
+													  VerticalOptions="Center"
+													  Color="{StaticResource PrimaryColor}"/>
 
 											<Label Text="{Binding Text}"
 												   TextColor="White"
