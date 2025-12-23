@@ -122,44 +122,50 @@ namespace KnolageTests.Pages
 
                     case BlockType.Image:
                         var h = new HorizontalStackLayout { Spacing = 8 };
-                        var pathEntry = new Entry { Text = block.Content, HorizontalOptions = LayoutOptions.FillAndExpand };
-                        pathEntry.TextChanged += (s, e) => block.Content = e.NewTextValue ?? string.Empty;
+
+                        var pathEntry = new Entry
+                        {
+                            Text = block.Content,
+                            HorizontalOptions = LayoutOptions.FillAndExpand
+                        };
+
+                        // При изменении текста вручную — обновляем блок
+                        pathEntry.TextChanged += (s, e) =>
+                            block.Content = e.NewTextValue ?? string.Empty;
+
                         var pickBtn = new Button { Text = "Выбрать" };
+
                         pickBtn.Clicked += async (_, __) =>
                         {
                             var fr = await FilePicker.PickAsync(new PickOptions
                             {
                                 PickerTitle = "Выберите изображение"
-                            }).ConfigureAwait(false);
+                            });
 
-                            if (fr != null)
+                            if (fr == null)
+                                return;
+
+                            var appFolder = FileSystem.AppDataDirectory;
+                            var fileName = Path.GetFileName(fr.FullPath ?? fr.FileName);
+                            var destinationPath = Path.Combine(appFolder, fileName);
+
+                            using (var sourceStream = await fr.OpenReadAsync())
+                            using (var destinationStream = File.OpenWrite(destinationPath))
                             {
-                                // Папка приложения
-                                var appFolder = FileSystem.AppDataDirectory;
-
-                                // Имя файла
-                                var fileName = Path.GetFileName(fr.FullPath ?? fr.FileName);
-
-                                // Путь назначения
-                                var destinationPath = Path.Combine(appFolder, fileName);
-
-                                // Копирование файла
-                                using (var sourceStream = await fr.OpenReadAsync())
-                                using (var destinationStream = File.OpenWrite(destinationPath))
-                                {
-                                    await sourceStream.CopyToAsync(destinationStream);
-                                }
-
-                                // Сохраняем путь к локальной копии
-                                _article.ThumbnailPath = destinationPath;
-
-                                // Обновляем UI
-                                await MainThread.InvokeOnMainThreadAsync(() =>
-                                {
-                                    ThumbnailEntry.Text = destinationPath;
-                                });
+                                await sourceStream.CopyToAsync(destinationStream);
                             }
+
+                            // ВАЖНО: сохраняем путь в блок, а не в статью
+                            block.Type = BlockType.Image;
+                            block.Content = destinationPath;
+
+                            // Обновляем UI
+                            await MainThread.InvokeOnMainThreadAsync(() =>
+                            {
+                                pathEntry.Text = destinationPath;
+                            });
                         };
+
                         h.Children.Add(pathEntry);
                         h.Children.Add(pickBtn);
                         v.Children.Add(h);
@@ -259,35 +265,35 @@ namespace KnolageTests.Pages
                 var fr = await FilePicker.PickAsync(new PickOptions
                 {
                     PickerTitle = "Выберите изображение"
-                }).ConfigureAwait(false);
+                });
 
-                if (fr != null)
+                if (fr == null)
+                    return;
+
+                // Папка приложения
+                var appFolder = FileSystem.AppDataDirectory;
+
+                // Имя файла
+                var fileName = Path.GetFileName(fr.FullPath ?? fr.FileName);
+
+                // Путь назначения
+                var destinationPath = Path.Combine(appFolder, fileName);
+
+                // Копирование файла в локальную папку приложения
+                using (var sourceStream = await fr.OpenReadAsync())
+                using (var destinationStream = File.OpenWrite(destinationPath))
                 {
-                    // Папка приложения
-                    var appFolder = FileSystem.AppDataDirectory;
-
-                    // Имя файла
-                    var fileName = Path.GetFileName(fr.FullPath ?? fr.FileName);
-
-                    // Путь назначения
-                    var destinationPath = Path.Combine(appFolder, fileName);
-
-                    // Копирование файла
-                    using (var sourceStream = await fr.OpenReadAsync())
-                    using (var destinationStream = File.OpenWrite(destinationPath))
-                    {
-                        await sourceStream.CopyToAsync(destinationStream);
-                    }
-
-                    // Сохраняем путь к локальной копии
-                    _article.ThumbnailPath = destinationPath;
-
-                    // Обновляем UI
-                    await MainThread.InvokeOnMainThreadAsync(() =>
-                    {
-                        ThumbnailEntry.Text = destinationPath;
-                    });
+                    await sourceStream.CopyToAsync(destinationStream);
                 }
+
+                // Сохраняем путь к локальной копии
+                _article.ThumbnailPath = destinationPath;
+
+                // Обновляем UI
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    ThumbnailEntry.Text = destinationPath;
+                });
             }
             catch
             {
