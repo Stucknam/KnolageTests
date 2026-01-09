@@ -37,7 +37,7 @@ namespace KnolageTests.Pages
             {
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    await DisplayAlert("Error", $"Failed to load articles: {ex.Message}", "OK");
+                    await DisplayAlert("Ошибка", $"Не удалось загрузить статьи: {ex.Message}", "OK");
                 });
             }
         }
@@ -89,18 +89,5 @@ namespace KnolageTests.Pages
             }
         }
 
-        //async void OnCreateArticleClicked(object sender, EventArgs e)
-        //{
-        //    var page = new ArticleEditorPage();
-        //    if (Navigation != null)
-        //        await Navigation.PushAsync(page);
-        //    else
-        //        Application.Current.MainPage = new NavigationPage(page);
-        //}
-
-        async void OnRefreshClicked(object sender, EventArgs e)
-        {
-            await LoadAsync();
-        }
     }
 }

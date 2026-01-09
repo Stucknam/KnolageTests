@@ -15,7 +15,7 @@ namespace KnolageTests.Pages
         readonly KnowledgeBaseService _service = new KnowledgeBaseService();
         KnowledgeArticle _article;
 
-        // New article
+       
         public ArticleEditorPage()
         {
             InitializeComponent();
@@ -24,7 +24,7 @@ namespace KnolageTests.Pages
             RenderBlocks();
         }
 
-        // Edit by id
+        
         public ArticleEditorPage(string articleId)
         {
             InitializeComponent();
@@ -32,7 +32,7 @@ namespace KnolageTests.Pages
             _ = LoadArticleAsync(articleId);
         }
 
-        // Edit by instance
+
         public ArticleEditorPage(KnowledgeArticle article)
         {
             InitializeComponent();
@@ -176,18 +176,18 @@ namespace KnolageTests.Pages
                         break;
                 }
 
-                // action buttons
+                
                 var actions = new HorizontalStackLayout { Spacing = 8 };
 
-                var up = new Button { ImageSource = "ic_fluent_arrow_sort_up_24_filled.png", BackgroundColor = (Color)Application.Current.Resources["PrimaryColor"] ,  WidthRequest = 40, HeightRequest = 36 };
+                var up = new ImageButton { Source = "ic_fluent_arrow_sort_up_24_filled.png", BackgroundColor = (Color)Application.Current.Resources["PrimaryColor"] ,  WidthRequest = 40, HeightRequest = 36 };
                 up.Clicked += (_, __) => MoveBlockUp(idx);
                 actions.Children.Add(up);
 
-                var down = new Button { ImageSource = "ic_fluent_arrow_sort_down_24_filled.png", BackgroundColor = (Color)Application.Current.Resources["PrimaryColor"],  WidthRequest = 40, HeightRequest = 36 };
+                var down = new ImageButton { Source = "ic_fluent_arrow_sort_down_24_filled.png", BackgroundColor = (Color)Application.Current.Resources["PrimaryColor"],  WidthRequest = 40, HeightRequest = 36 };
                 down.Clicked += (_, __) => MoveBlockDown(idx);
                 actions.Children.Add(down);
 
-                var del = new Button { ImageSource = "ic_fluent_delete_24_filled.png", HeightRequest = 36, BackgroundColor = Colors.IndianRed, TextColor = Colors.White };
+                var del = new ImageButton { Source = "ic_fluent_delete_24_filled.png", HeightRequest = 36, WidthRequest = 40, BackgroundColor = (Color)Application.Current.Resources["ErrorColor"], Padding = 6 };
                 del.Clicked += (_, __) => DeleteBlock(idx);
                 actions.Children.Add(del);
 
@@ -232,7 +232,7 @@ namespace KnolageTests.Pages
 
         async void OnAddBlockClicked(object sender, EventArgs e)
         {
-            // Cross-platform action sheet to present block types
+            
             var choice = await DisplayActionSheet("Добавить блок", "Отмена", null,
                 "Заголовок", "Абзац", "Изображение", "Список", "Цитата", "Разделитель");
 
@@ -248,7 +248,7 @@ namespace KnolageTests.Pages
                 OnAddQuoteClicked(sender, EventArgs.Empty);
             else if (choice == "Разделитель")
                 OnAddDividerClicked(sender, EventArgs.Empty);
-            // Cancel or null -> do nothing
+            
         }
 
         void OnAddHeaderClicked(object sender, EventArgs e) => AddBlock(BlockType.Header);
@@ -310,7 +310,7 @@ namespace KnolageTests.Pages
                 return;
             }
 
-            // Update article fields
+           
             _article.Title = title;
             _article.Subtitle = SubtitleEntry.Text?.Trim() ?? string.Empty;
             _article.ThumbnailPath = ThumbnailEntry.Text?.Trim() ?? string.Empty;

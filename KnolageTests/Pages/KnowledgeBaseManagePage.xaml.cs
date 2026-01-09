@@ -38,7 +38,7 @@ namespace KnolageTests.Pages
             {
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    await DisplayAlert("Error", $"Failed to load articles: {ex.Message}", "OK");
+                    await DisplayAlert("Ошибка", $"Не удалось загрузить статьи: {ex.Message}", "OK");
                 });
             }
         }
@@ -104,8 +104,8 @@ namespace KnolageTests.Pages
         {
             if (sender is Button btn && btn.CommandParameter is KnowledgeArticle article)
             {
-                var confirm = await DisplayAlert("Confirm delete",
-                    $"Are you sure you want to delete '{article.Title}'?", "Delete", "Cancel");
+                var confirm = await DisplayAlert("Подтвердить удаление",
+                    $"Вы уверены что хотите удалить '{article.Title}'?", "Удалить", "Отмена");
 
                 if (!confirm) return;
 
@@ -118,7 +118,7 @@ namespace KnolageTests.Pages
                 {
                     await MainThread.InvokeOnMainThreadAsync(async () =>
                     {
-                        await DisplayAlert("Error", $"Failed to delete: {ex.Message}", "OK");
+                        await DisplayAlert("Ошибка", $"Не удалось удалить: {ex.Message}", "OK");
                     });
                 }
             }

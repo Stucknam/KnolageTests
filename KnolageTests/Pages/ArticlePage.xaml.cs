@@ -15,15 +15,13 @@ namespace KnolageTests.Pages
         readonly TestsService _testsService = new TestsService();
 
         readonly KnowledgeBaseService _service = new KnowledgeBaseService();
-
-        // Constructor: load by KnowledgeArticle Id
+        
         public ArticlePage(string articleId)
         {
             InitializeComponent();
             _ = LoadByIdAsync(articleId);
         }
 
-        // Constructor: directly provide KnowledgeArticle
         public ArticlePage(KnowledgeArticle article)
         {
             InitializeComponent();
@@ -53,7 +51,7 @@ namespace KnolageTests.Pages
                 return;
             }
 
-            // ensure field is set so tests can be loaded
+
             _article = article;
 
             await MainThread.InvokeOnMainThreadAsync(() =>
@@ -82,7 +80,7 @@ namespace KnolageTests.Pages
             }
             catch
             {
-                // on error, show friendly message
+
                 TestsContainer.Children.Add(new Label { Text = "Не удалось загрузить тесты.", TextColor = Colors.Gray });
                 return;
             }
@@ -105,7 +103,7 @@ namespace KnolageTests.Pages
                 };
                 btn.Clicked += async (_, __) =>
                 {
-                    // navigate to TestRunPage by id
+
                     await Navigation.PushAsync(new TestRunPage(local.Id));
                 };
                 TestsContainer.Children.Add(btn);
@@ -114,7 +112,7 @@ namespace KnolageTests.Pages
 
         async void OnStartTestClicked(object sender, EventArgs e)
         {
-            // kept for compatibility if referenced elsewhere; no-op or open first test
+
             if (_article == null) return;
             var tests = await _testsService.GetByArticleIdAsync(_article.Id);
             var first = tests?.FirstOrDefault();
@@ -123,7 +121,7 @@ namespace KnolageTests.Pages
         }
         void RenderArticle(KnowledgeArticle article)
         {
-            // Thumbnail
+ 
             if (!string.IsNullOrWhiteSpace(article.ThumbnailPath))
             {
                 ThumbnailImage.Source = article.ThumbnailPath;
@@ -134,7 +132,6 @@ namespace KnolageTests.Pages
                 ThumbnailImage.IsVisible = false;
             }
 
-            // Tags
             TagsContainer.Children.Clear();
             if (article.Tags != null)
             {
@@ -158,7 +155,7 @@ namespace KnolageTests.Pages
                 }
             }
 
-            // Blocks
+
             BlocksContainer.Children.Clear();
             if (article.Blocks == null || article.Blocks.Count == 0)
                 return;
