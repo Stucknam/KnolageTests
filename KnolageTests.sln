@@ -8,14 +8,22 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM64 = Debug|ARM64
 		Release|Any CPU = Release|Any CPU
+		Release|ARM64 = Release|ARM64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{2DBFDD72-CCF9-45D0-A71A-8FB59F3A56BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2DBFDD72-CCF9-45D0-A71A-8FB59F3A56BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DBFDD72-CCF9-45D0-A71A-8FB59F3A56BF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{2DBFDD72-CCF9-45D0-A71A-8FB59F3A56BF}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{2DBFDD72-CCF9-45D0-A71A-8FB59F3A56BF}.Debug|ARM64.Build.0 = Debug|ARM64
 		{2DBFDD72-CCF9-45D0-A71A-8FB59F3A56BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DBFDD72-CCF9-45D0-A71A-8FB59F3A56BF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2DBFDD72-CCF9-45D0-A71A-8FB59F3A56BF}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{2DBFDD72-CCF9-45D0-A71A-8FB59F3A56BF}.Release|ARM64.ActiveCfg = Release|ARM64
+		{2DBFDD72-CCF9-45D0-A71A-8FB59F3A56BF}.Release|ARM64.Build.0 = Release|ARM64
+		{2DBFDD72-CCF9-45D0-A71A-8FB59F3A56BF}.Release|ARM64.Deploy.0 = Release|ARM64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

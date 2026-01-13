@@ -6,12 +6,13 @@ using Microsoft.Maui.Controls;
 using Microsoft.Maui.ApplicationModel;
 using KnolageTests.Models;
 using KnolageTests.Services;
+using KnolageTests.Helpers;
 
 namespace KnolageTests.Pages
 {
     public partial class TestEditorPage : ContentPage
     {
-        readonly TestsService _testsService = new TestsService();
+        readonly TestsService _testsService;
         readonly KnowledgeBaseService _kbService = new KnowledgeBaseService();
 
         Test _test = new Test();
@@ -23,6 +24,7 @@ namespace KnolageTests.Pages
         {
             InitializeComponent();
             _test = new Test();
+            _testsService = ServiceHelper.GetService<TestsService>();
             _ = InitializeAsync();
         }
 
@@ -31,8 +33,10 @@ namespace KnolageTests.Pages
         {
             InitializeComponent();
             _test = new Test(); // temporary
+            _testsService = ServiceHelper.GetService<TestsService>();
             _ = LoadTestAsync(testId);
             _ = InitializeAsync();
+            
         }
 
         // Edit by instance
@@ -40,7 +44,9 @@ namespace KnolageTests.Pages
         {
             InitializeComponent();
             _test = test ?? new Test();
+            _testsService = ServiceHelper.GetService<TestsService>();
             _ = InitializeAsync();
+            
         }
 
         async Task InitializeAsync()
@@ -58,7 +64,7 @@ namespace KnolageTests.Pages
         {
             if (string.IsNullOrWhiteSpace(id)) return;
 
-            var t = await _testsService.GetByIdAsync(id).ConfigureAwait(false);
+            var t = await _testsService.GetByIdAsync(id);
             if (t != null)
             {
                 _test = t;

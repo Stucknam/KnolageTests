@@ -6,20 +6,27 @@ using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Graphics;
 using KnolageTests.Models;
 using KnolageTests.Services;
+using KnolageTests.Helpers;
+
 
 namespace KnolageTests.Pages
 {
     public partial class ArticlePage : ContentPage
     {
         KnowledgeArticle? _article;
-        readonly TestsService _testsService = new TestsService();
-
+        readonly TestsService _testsService;
+        private readonly TestAttemptDatabaseService _db;
         readonly KnowledgeBaseService _service = new KnowledgeBaseService();
-        
         public ArticlePage(string articleId)
         {
             InitializeComponent();
+            _db = ServiceHelper.GetService<TestAttemptDatabaseService>();
             _ = LoadByIdAsync(articleId);
+            _testsService = ServiceHelper.GetService<TestsService>();
+            MessagingCenter.Subscribe<TestRunPage, string>(this, "TestCompleted", async (sender, testId) =>
+            {
+                await LoadTestsAsync();
+            });
         }
 
         public ArticlePage(KnowledgeArticle article)
@@ -30,10 +37,23 @@ namespace KnolageTests.Pages
             BindingContext = article;
             Title = article.Title;
             RenderArticle(article);
+            _db = ServiceHelper.GetService<TestAttemptDatabaseService>();
+            _testsService = ServiceHelper.GetService<TestsService>();
             _ = LoadTestsAsync();
+            MessagingCenter.Subscribe<TestRunPage, string>(this, "TestCompleted", async (sender, testId) =>
+            {
+                await LoadTestsAsync();
+            });
         }
 
-        
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            MessagingCenter.Unsubscribe<TestRunPage, string>(this, "TestCompleted");
+        }
+
+
+
         async Task LoadByIdAsync(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -93,20 +113,91 @@ namespace KnolageTests.Pages
 
             foreach (var t in tests)
             {
+                var lastAttempt = await _db.GetLastAttemptForTestAsync(t.Id);
                 var local = t;
-                var btn = new Button
+
+                int? percent = null;
+
+                if (lastAttempt != null && lastAttempt.MaxScore > 0)
+                {
+                    percent = (int)Math.Round((double)lastAttempt.Score / lastAttempt.MaxScore * 100);
+                }
+
+
+
+                // Карточка
+                var card = new Frame
+                {
+                    CornerRadius = 12,
+                    Padding = 12,
+                    Margin = new Thickness(0, 8),
+                    BackgroundColor = (Color)Application.Current.Resources["SurfaceColor"],
+                    HasShadow = true
+                };
+
+                var cardLayout = new VerticalStackLayout
+                {
+                    Spacing = 8
+                };
+
+                // Кнопка запуска теста
+                var testButton = new Button
                 {
                     Text = string.IsNullOrWhiteSpace(local.Title) ? "Без названия" : local.Title,
                     HorizontalOptions = LayoutOptions.Fill,
                     BackgroundColor = (Color)Application.Current.Resources["PrimaryColor"],
-                    TextColor = (Color)Application.Current.Resources["TextPrimaryColor"]
+                    TextColor = (Color)Application.Current.Resources["TextPrimaryColor"],
+                    FontAttributes = FontAttributes.Bold,
+                    CornerRadius = 8
                 };
-                btn.Clicked += async (_, __) =>
+                testButton.Clicked += async (_, __) =>
                 {
-
                     await Navigation.PushAsync(new TestRunPage(local.Id));
                 };
-                TestsContainer.Children.Add(btn);
+
+                // Горизонтальный блок: результат + кнопка истории
+                var bottomRow = new HorizontalStackLayout
+                {
+                    Spacing = 10,
+                    VerticalOptions = LayoutOptions.Center
+                };
+
+                // Результат последней попытки
+
+                var resultLabel = new Label
+                {
+
+                    Text = percent != null
+                        ? $"Последний результат: {percent}%"
+                        : "Нет попыток",
+                    TextColor = Colors.Gray,
+                    VerticalOptions = LayoutOptions.Center
+                };
+
+                // Кнопка истории (ImageButton)
+                var historyButton = new ImageButton
+                {
+                    Source = "ic_fluent_history_24_filled.png", // добавь иконку в Resources/Images
+                    BackgroundColor = Colors.Transparent,
+                    WidthRequest = 32,
+                    HeightRequest = 32,
+                    
+                };
+                historyButton.Clicked += async (_, __) =>
+                {
+                   await Navigation.PushAsync(new AttemptsHistoryPage(local.Id));
+                };
+
+                bottomRow.Children.Add(resultLabel);
+                bottomRow.Children.Add(historyButton);
+
+                // Собираем карточку
+                cardLayout.Children.Add(testButton);
+                cardLayout.Children.Add(bottomRow);
+
+                card.Content = cardLayout;
+
+                TestsContainer.Children.Add(card);
             }
         }
 

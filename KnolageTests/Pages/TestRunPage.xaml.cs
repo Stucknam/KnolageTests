@@ -1,10 +1,11 @@
+using KnolageTests.Helpers;
+using KnolageTests.Models;
+using KnolageTests.Services;
+using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Maui.Controls;
-using KnolageTests.Models;
-using KnolageTests.Services;
 
 namespace KnolageTests.Pages
 {
@@ -12,6 +13,8 @@ namespace KnolageTests.Pages
     {
         readonly TestsService _testsService = new TestsService();
         Test? _test;
+        readonly TestAttemptDatabaseService _dbService;
+        readonly INotificationService _notificationService;
 
         // maps questionId -> set of selected option Ids
         readonly Dictionary<string, HashSet<string>> _selections = new();
@@ -19,14 +22,23 @@ namespace KnolageTests.Pages
         public TestRunPage(Test test)
         {
             InitializeComponent();
+
+            _dbService = ServiceHelper.GetService<TestAttemptDatabaseService>();
+            _notificationService = ServiceHelper.GetService<INotificationService>();
+
             _ = InitializeWithTestAsync(test);
         }
 
         public TestRunPage(string testId)
         {
             InitializeComponent();
+
+            _dbService = ServiceHelper.GetService<TestAttemptDatabaseService>();
+            _notificationService = ServiceHelper.GetService<INotificationService>();
+
             _ = InitializeWithIdAsync(testId);
         }
+
 
         async Task InitializeWithIdAsync(string testId)
         {
@@ -70,6 +82,11 @@ namespace KnolageTests.Pages
             await Task.CompletedTask;
         }
 
+        public void UpdateTest(string testId)
+        {
+            _ = InitializeWithIdAsync(testId);
+        }
+
         void OnOptionCheckedChanged(object? sender, CheckedChangedEventArgs e)
         {
             if (sender is not CheckBox cb) return;
@@ -93,7 +110,7 @@ namespace KnolageTests.Pages
                 set.Remove(option.Id);
         }
 
-        async void OnCheckResultClicked(object? sender, EventArgs e)
+        private async void OnCheckResultClicked(object? sender, EventArgs e)
         {
             if (_test == null)
             {
@@ -101,26 +118,79 @@ namespace KnolageTests.Pages
                 return;
             }
 
-            int total = 0;
+            int totalQuestions = _test.Questions?.Count ?? 0;
             int correctCount = 0;
 
-            foreach (var q in _test.Questions ?? Enumerable.Empty<TestQuestion>())
+            var answers = new List<TestAttemptAnswer>();
+
+            foreach (var question in _test.Questions ?? Enumerable.Empty<TestQuestion>())
             {
-                total++;
+                // множество правильных вариантов
+                var correctIds = new HashSet<string>(
+                    question.Options?.Where(o => o.IsCorrect).Select(o => o.Id)
+                    ?? Enumerable.Empty<string>()
+                );
 
-                // correct option ids for this question
-                var correctIds = new HashSet<string>(q.Options?.Where(o => o.IsCorrect).Select(o => o.Id) ?? Enumerable.Empty<string>());
-
-                // user's selected ids
-                _selections.TryGetValue(q.Id, out var selectedIds);
+                // множество выбранных пользователем вариантов
+                _selections.TryGetValue(question.Id, out var selectedIds);
                 selectedIds ??= new HashSet<string>();
 
-                // consider a question correct if selected set equals the correct set
-                if (correctIds.SetEquals(selectedIds))
-                    correctCount++;
+                bool isCorrect = correctIds.SetEquals(selectedIds);
+                if (isCorrect) correctCount++;
+
+                // если пользователь ничего не выбрал — всё равно сохраняем запись
+                if (selectedIds.Count == 0)
+                {
+                    answers.Add(new TestAttemptAnswer
+                    {
+                        QuestionId = question.Id,
+                        SelectedOptionId = null,
+                        IsCorrect = false
+                    });
+                }
+                else
+                {
+                    // сохраняем каждый выбранный вариант
+                    foreach (var selectedId in selectedIds)
+                    {
+                        answers.Add(new TestAttemptAnswer
+                        {
+                            QuestionId = question.Id,
+                            SelectedOptionId = selectedId,
+                            IsCorrect = correctIds.Contains(selectedId)
+                        });
+                    }
+                }
+
             }
 
-            await DisplayAlert("Результат", $"Правильно: {correctCount} из {total}", "OK");
+            var attempt = new TestAttempt
+            {
+                TestId = _test.Id,
+                CompletedAt = DateTime.Now,
+                Score = correctCount,
+                MaxScore = totalQuestions
+            };
+
+            // сохраняем попытку и ответы в БД
+            await _dbService.AddAttemptAsync(attempt, answers);
+
+            // уведомление, если результат не идеален
+            if (!attempt.IsPerfect)
+            {
+                
+                _notificationService.ShowNotification(
+                    $"Тест: {_test.Title}",
+                    "Ваш результат ниже 100%. Попробуйте пройти тест снова.", _test.Id
+                );
+            }
+
+            // показываем пользователю результат
+            await DisplayAlert("Результат", $"Правильно: {correctCount} из {totalQuestions}", "OK");
+            await Navigation.PopAsync();
+
+            MessagingCenter.Send(this, "TestCompleted", _test.Id);
+
         }
     }
 }

@@ -6,12 +6,13 @@ using Microsoft.Maui.Controls;
 using Microsoft.Maui.ApplicationModel;
 using KnolageTests.Models;
 using KnolageTests.Services;
+using KnolageTests.Helpers;
 
 namespace KnolageTests.Pages
 {
     public partial class TestsManagePage : ContentPage
     {
-        readonly TestsService _testsService = new TestsService();
+        readonly TestsService _testsService;
         readonly KnowledgeBaseService _kbService = new KnowledgeBaseService();
 
         // full list of display items
@@ -20,6 +21,7 @@ namespace KnolageTests.Pages
         public TestsManagePage()
         {
             InitializeComponent();
+            _testsService = ServiceHelper.GetService<TestsService>();
             _ = LoadAsync();
         }
 

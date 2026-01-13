@@ -41,7 +41,7 @@
                                         BackgroundColor="{StaticResource PrimaryColor}"/>
 
                                 <Button ImageSource="ic_fluent_delete_24_filled.png" HeightRequest="40" Text="Удалить"
-                                        BackgroundColor="{StaticResource ErrorColor}}"
+                                        BackgroundColor="{StaticResource ErrorColor}"
                                         TextColor="White"
                                         CommandParameter="{Binding .}"
                                         Clicked="OnDeleteClicked" />

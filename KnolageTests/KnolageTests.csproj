@@ -39,10 +39,45 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+		<Platforms>AnyCPU;ARM64</Platforms>
+		<AndroidSigningKeyStore>KnolageTests.keystore</AndroidSigningKeyStore>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
+	  <AndroidKeyStore>False</AndroidKeyStore>
+	  <AndroidSigningStorePass>!AlP#1Sn</AndroidSigningStorePass>
+	  <AndroidSigningKeyAlias>Knowly</AndroidSigningKeyAlias>
+	  <AndroidSigningKeyPass>!AlP#1Sn</AndroidSigningKeyPass>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|ARM64'">
+	  <AndroidKeyStore>False</AndroidKeyStore>
+	  <AndroidSigningStorePass>!AlP#1Sn</AndroidSigningStorePass>
+	  <AndroidSigningKeyAlias>Knowly</AndroidSigningKeyAlias>
+	  <AndroidSigningKeyPass>!AlP#1Sn</AndroidSigningKeyPass>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
+	  <AndroidKeyStore>False</AndroidKeyStore>
+	  <AndroidSigningStorePass>!AlP#1Sn</AndroidSigningStorePass>
+	  <AndroidSigningKeyAlias>Knowly</AndroidSigningKeyAlias>
+	  <AndroidSigningKeyPass>!AlP#1Sn</AndroidSigningKeyPass>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|ARM64'">
+	  <AndroidKeyStore>False</AndroidKeyStore>
+	  <AndroidSigningStorePass>!AlP#1Sn</AndroidSigningStorePass>
+	  <AndroidSigningKeyAlias>Knowly</AndroidSigningKeyAlias>
+	  <AndroidSigningKeyPass>!AlP#1Sn</AndroidSigningKeyPass>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
+		<AndroidAsset Include="Platforms\Android\Resources\drawable\ic_stat_notify.png">
+		  <IsAppIcon>true</IsAppIcon>
+		  <ForegroundFile>Resources\AppIcon\appicon.png</ForegroundFile>
+		</AndroidAsset>
+		<MauiImage Include="Platforms\Android\Resources\drawable\ic_stat_notify.png" />
 		<MauiImage Include="Resources\AppIcon\appicon.png" ForegroundFile="Resources\AppIcon\appicon.png" IsAppIcon="true" />
 		
 		<!-- Splash Screen -->
@@ -58,9 +93,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="Platforms\Android\Resources\drawable\ic_stat_notify.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="AathifMahir.Maui.MauiIcons.Fluent" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.5" />
+		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -80,6 +120,12 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\ArticlePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\AttemptDetailsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\AttemptsHistoryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\KnowledgeBaseListPage.xaml">
