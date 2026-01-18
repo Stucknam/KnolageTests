@@ -21,7 +21,7 @@ namespace KnolageTests.Pages
         {
             InitializeComponent();
             _db = ServiceHelper.GetService<TestAttemptDatabaseService>();
-            _ = LoadByIdAsync(articleId);
+            //_ = LoadByIdAsync(articleId);
             _testsService = ServiceHelper.GetService<TestsService>();
             MessagingCenter.Subscribe<TestRunPage, string>(this, "TestCompleted", async (sender, testId) =>
             {
@@ -39,12 +39,19 @@ namespace KnolageTests.Pages
             RenderArticle(article);
             _db = ServiceHelper.GetService<TestAttemptDatabaseService>();
             _testsService = ServiceHelper.GetService<TestsService>();
-            _ = LoadTestsAsync();
+            //_ = LoadTestsAsync();
             MessagingCenter.Subscribe<TestRunPage, string>(this, "TestCompleted", async (sender, testId) =>
             {
                 await LoadTestsAsync();
             });
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            _ = LoadTestsAsync();
+        }
+
 
         protected override void OnDisappearing()
         {

@@ -5,10 +5,7 @@
              x:Name="Root">
 
     <Frame CornerRadius="8" Padding="10" Margin="0,6" HasShadow="True" BackgroundColor="{StaticResource SurfaceColor}">
-        <!-- FlexLayout with Wrap so content flows on small widths:
-             - Image has fixed basis (square) and won't shrink below its size.
-             - Content block has Grow=1 and MinWidthRequest=0 so it can compress and wrap text.
-        -->
+
         <FlexLayout Direction="Row" Wrap="Wrap" AlignItems="Center" JustifyContent="Start">
             <Image
                 Source="{Binding ImageSource, Source={x:Reference Root}}"
@@ -33,7 +30,6 @@
                         MaxLines="3"
                     HorizontalOptions="StartAndExpand" />
 
-                <!-- Tags: FlexLayout with Wrap so tags flow to next line when needed -->
                 <FlexLayout
                     BindableLayout.ItemsSource="{Binding Tags, Source={x:Reference Root}}"
                     Direction="Row"

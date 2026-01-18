@@ -17,7 +17,6 @@ namespace KnolageTests.Pages
         public KnowledgeBaseListPage()
         {
             InitializeComponent();
-            _ = LoadAsync();
         }
 
         protected override void OnAppearing()

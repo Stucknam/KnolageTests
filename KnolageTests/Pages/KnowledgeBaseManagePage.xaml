@@ -5,6 +5,7 @@
              x:Class="KnolageTests.Pages.KnowledgeBaseManagePage"
              Title="Управление статьями"
              BackgroundColor="{StaticResource BackgroundColor}">
+    
 
     <Grid RowDefinitions="Auto,Auto,*"  Padding="12">
 
@@ -14,15 +15,33 @@
         Placeholder="Поиск..."
         TextChanged="OnSearchTextChanged"
         Grid.Row="0" />
+        
+        
+        
 
         <HorizontalStackLayout Grid.Row="1" Spacing="8">
             <Button ImageSource="ic_fluent_add_circle_24_filled.png" HeightRequest="40" Clicked="OnCreateClicked" HorizontalOptions="EndAndExpand" BackgroundColor="{StaticResource PrimaryColor}" />
             <Button ImageSource="ic_fluent_arrow_sync_24_filled.png" HeightRequest="40" Clicked="OnRefreshClicked" HorizontalOptions="Start" BackgroundColor="{StaticResource PrimaryVariantColor}" />
         </HorizontalStackLayout>
+
+        <ActivityIndicator
+        x:Name="LoadingIndicator"
+        WidthRequest="50"
+        HeightRequest="50"
+        Color="{StaticResource PrimaryColor}"
+        Grid.RowSpan="3"    
+        IsVisible="False"
+        IsRunning="False"
+        VerticalOptions="Center"
+        HorizontalOptions="Center" />
+
+
+
         <CollectionView x:Name="ManageCollectionView"
+                        ItemsSource="{Binding VisibleArticles}"
                         ItemsLayout="VerticalList"
                         SelectionMode="None"
-                        EmptyView="Статьи не найдены."
+                        
 						Grid.Row="2">
             <CollectionView.ItemTemplate>
                 <DataTemplate>

@@ -7,6 +7,8 @@ using Microsoft.Maui.Storage;
 using MauiIcons.Fluent;
 using KnolageTests.Models;
 using KnolageTests.Services;
+using KnolageTests.Helpers;
+
 
 namespace KnolageTests.Pages
 {
@@ -14,6 +16,7 @@ namespace KnolageTests.Pages
     {
         readonly KnowledgeBaseService _service = new KnowledgeBaseService();
         KnowledgeArticle _article;
+        readonly ImageStorageService _imageStorageService;
 
        
         public ArticleEditorPage()
@@ -21,6 +24,7 @@ namespace KnolageTests.Pages
             InitializeComponent();
             _article = new KnowledgeArticle();
             BindBasicFields();
+            _imageStorageService = ServiceHelper.GetService<ImageStorageService>();
             RenderBlocks();
         }
 
@@ -29,6 +33,7 @@ namespace KnolageTests.Pages
         {
             InitializeComponent();
             _article = new KnowledgeArticle(); // temporary
+            _imageStorageService = ServiceHelper.GetService<ImageStorageService>();
             _ = LoadArticleAsync(articleId);
         }
 
@@ -38,8 +43,10 @@ namespace KnolageTests.Pages
             InitializeComponent();
             _article = article ?? new KnowledgeArticle();
             BindBasicFields();
+            _imageStorageService = ServiceHelper.GetService<ImageStorageService>();
             RenderBlocks();
         }
+
 
         async Task LoadArticleAsync(string id)
         {
@@ -73,7 +80,7 @@ namespace KnolageTests.Pages
         {
             TitleEntry.Text = _article.Title;
             SubtitleEntry.Text = _article.Subtitle;
-            ThumbnailEntry.Text = _article.ThumbnailPath;
+            ThumbnailImage.Source = _article.ThumbnailPath;
             TagsEntry.Text = _article.Tags != null ? string.Join(", ", _article.Tags) : string.Empty;
             Title = string.IsNullOrWhiteSpace(_article.Title) ? "Новая статья" : _article.Title;
         }
@@ -129,6 +136,14 @@ namespace KnolageTests.Pages
                             HorizontalOptions = LayoutOptions.FillAndExpand
                         };
 
+                        var preview = new Image
+                        {
+                            HeightRequest = 120,
+                            Aspect = Aspect.AspectFill,
+                            Source = block.TempImageSource ?? block.Content
+                        };
+
+
                         // При изменении текста вручную — обновляем блок
                         pathEntry.TextChanged += (s, e) =>
                             block.Content = e.NewTextValue ?? string.Empty;
@@ -145,29 +160,15 @@ namespace KnolageTests.Pages
                             if (fr == null)
                                 return;
 
-                            var appFolder = FileSystem.AppDataDirectory;
-                            var fileName = Path.GetFileName(fr.FullPath ?? fr.FileName);
-                            var destinationPath = Path.Combine(appFolder, fileName);
+                            block.TempImageSource = fr.FullPath;
+                            preview.Source = fr.FullPath;
 
-                            using (var sourceStream = await fr.OpenReadAsync())
-                            using (var destinationStream = File.OpenWrite(destinationPath))
-                            {
-                                await sourceStream.CopyToAsync(destinationStream);
-                            }
-
-                            // ВАЖНО: сохраняем путь в блок, а не в статью
-                            block.Type = BlockType.Image;
-                            block.Content = destinationPath;
-
-                            // Обновляем UI
-                            await MainThread.InvokeOnMainThreadAsync(() =>
-                            {
-                                pathEntry.Text = destinationPath;
-                            });
                         };
+
 
                         h.Children.Add(pathEntry);
                         h.Children.Add(pickBtn);
+                        h.Children.Add(preview);
                         v.Children.Add(h);
                         break;
 
@@ -215,11 +216,37 @@ namespace KnolageTests.Pages
             RenderBlocks();
         }
 
-        void DeleteBlock(int index)
+        async Task DeleteBlock(int index)
         {
-            if (index < 0 || index >= _article.Blocks.Count) return;
-            _article.Blocks.RemoveAt(index);
-            RenderBlocks();
+            try
+            {
+                if (index < 0 || index >= _article.Blocks.Count) return;
+                var block = _article.Blocks[index];
+
+                _article.Blocks.RemoveAt(index);
+                RenderBlocks();
+
+                const short durationMs = 4000;
+                
+                bool undoPressed = false;
+
+                if (undoPressed)
+                {
+                    _article.Blocks.Insert(index, block);
+                    RenderBlocks();
+                    return;
+                }
+                if (block.Type == BlockType.Image)
+                {
+                    _imageStorageService.DeleteImageIfExists(block.Content);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ошибка в DeleteBlock: " + ex);
+            }
+
+
         }
 
         void AddBlock(BlockType type)
@@ -270,30 +297,9 @@ namespace KnolageTests.Pages
                 if (fr == null)
                     return;
 
-                // Папка приложения
-                var appFolder = FileSystem.AppDataDirectory;
+                _article.TempThumbnailSource = fr.FullPath;
+                ThumbnailImage.Source = fr.FullPath;
 
-                // Имя файла
-                var fileName = Path.GetFileName(fr.FullPath ?? fr.FileName);
-
-                // Путь назначения
-                var destinationPath = Path.Combine(appFolder, fileName);
-
-                // Копирование файла в локальную папку приложения
-                using (var sourceStream = await fr.OpenReadAsync())
-                using (var destinationStream = File.OpenWrite(destinationPath))
-                {
-                    await sourceStream.CopyToAsync(destinationStream);
-                }
-
-                // Сохраняем путь к локальной копии
-                _article.ThumbnailPath = destinationPath;
-
-                // Обновляем UI
-                await MainThread.InvokeOnMainThreadAsync(() =>
-                {
-                    ThumbnailEntry.Text = destinationPath;
-                });
             }
             catch
             {
@@ -313,7 +319,24 @@ namespace KnolageTests.Pages
            
             _article.Title = title;
             _article.Subtitle = SubtitleEntry.Text?.Trim() ?? string.Empty;
-            _article.ThumbnailPath = ThumbnailEntry.Text?.Trim() ?? string.Empty;
+            if (_article.TempThumbnailSource != null)
+            {
+                _imageStorageService.DeleteImageIfExists(_article.ThumbnailPath);
+                _article.ThumbnailPath = _imageStorageService.CopyToAppFolder(_article.TempThumbnailSource);
+                _article.TempThumbnailSource = null;
+            }
+
+            foreach (var block in _article.Blocks)
+            {
+                if (block.Type == BlockType.Image && block.TempImageSource != null)
+                {
+                    _imageStorageService.DeleteImageIfExists(block.Content);
+                    block.Content = _imageStorageService.CopyToAppFolder(block.TempImageSource);
+                    block.TempImageSource = null;
+                }
+            }
+
+
 
             var tagsText = TagsEntry.Text ?? string.Empty;
             var tags = tagsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)

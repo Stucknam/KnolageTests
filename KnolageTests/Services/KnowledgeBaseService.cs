@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Maui.Storage;
 using KnolageTests.Models;
+using KnolageTests.Helpers;
 
 namespace KnolageTests.Services
 {
@@ -21,9 +22,12 @@ namespace KnolageTests.Services
         };
         readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
+        readonly ImageStorageService _imageStorageService;
+
         public KnowledgeBaseService()
         {
             _filePath = Path.Combine(FileSystem.AppDataDirectory, FileName);
+            _imageStorageService = ServiceHelper.GetService<ImageStorageService>();
         }
 
         public async Task<List<KnowledgeArticle>> GetAllAsync()
@@ -142,9 +146,33 @@ namespace KnolageTests.Services
                 {
                     return;
                 }
+                // Выделяем удаяемую статью из списка
+                var article = list.FirstOrDefault(a => string.Equals(a.Id, id, StringComparison.OrdinalIgnoreCase));
+                if (article == null) return;
+                // Выделяем изображения для удаления
+                var tumbnailPath = article.ThumbnailPath;
 
-                var remaining = list.Where(a => !string.Equals(a.Id, id, StringComparison.OrdinalIgnoreCase)).ToList();
-                var json = JsonSerializer.Serialize(remaining, _jsonOptions);
+                if (tumbnailPath != null)
+                {
+                    _imageStorageService.DeleteImageIfExists(tumbnailPath);
+                }
+
+                // Список всех изображений в статье
+                var imagesPaths = article.Blocks
+                    .Where(b => b.Type == BlockType.Image)
+                    .Select(b => b.Content)
+                    .Where(path => !string.IsNullOrWhiteSpace(path))
+                    .ToList();
+
+                foreach (var imagePath in imagesPaths)
+                {
+                    _imageStorageService.DeleteImageIfExists(imagePath);
+                }
+
+                list.Remove(article);
+
+                //var remaining = list.Where(a => !string.Equals(a.Id, id, StringComparison.OrdinalIgnoreCase)).ToList();
+                var json = JsonSerializer.Serialize(list, _jsonOptions);
                 await File.WriteAllTextAsync(_filePath, json).ConfigureAwait(false);
             }
             finally

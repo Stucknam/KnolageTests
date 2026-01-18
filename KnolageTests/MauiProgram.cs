@@ -29,6 +29,7 @@ namespace KnolageTests
             });
 
             builder.Services.AddSingleton<TestsService>();
+            builder.Services.AddSingleton<ImageStorageService>();
 
 #if ANDROID
             builder.Services.AddSingleton<INotificationService, AndroidNotificationService>();

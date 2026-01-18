@@ -9,6 +9,7 @@ namespace KnolageTests.Models
         public string Title { get; set; }
         public string Subtitle { get; set; } // replaces Description
         public string ThumbnailPath { get; set; } // replaces Image
+        public string? TempThumbnailSource { get; set; }
         public List<string> Tags { get; set; }
         public List<ArticleBlock> Blocks { get; set; }
         public DateTime CreatedAt { get; set; }
