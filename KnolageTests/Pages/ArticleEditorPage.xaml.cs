@@ -118,7 +118,7 @@ namespace KnolageTests.Pages
                         {
                             Text = block.Content,
                             AutoSize = EditorAutoSizeOption.TextChanges,
-                            HeightRequest = 80
+                            MinimumHeightRequest = 40
                         };
                         editor.TextChanged += (s, e) =>
                         {
@@ -130,11 +130,11 @@ namespace KnolageTests.Pages
                     case BlockType.Image:
                         var h = new HorizontalStackLayout { Spacing = 8 };
 
-                        var pathEntry = new Entry
-                        {
-                            Text = block.Content,
-                            HorizontalOptions = LayoutOptions.FillAndExpand
-                        };
+                        //var pathEntry = new Entry
+                        //{
+                        //    Text = block.Content,
+                        //    HorizontalOptions = LayoutOptions.FillAndExpand
+                        //};
 
                         var preview = new Image
                         {
@@ -145,8 +145,8 @@ namespace KnolageTests.Pages
 
 
                         // При изменении текста вручную — обновляем блок
-                        pathEntry.TextChanged += (s, e) =>
-                            block.Content = e.NewTextValue ?? string.Empty;
+                        //pathEntry.TextChanged += (s, e) =>
+                        //    block.Content = e.NewTextValue ?? string.Empty;
 
                         var pickBtn = new Button { Text = "Выбрать" };
 
@@ -166,9 +166,10 @@ namespace KnolageTests.Pages
                         };
 
 
-                        h.Children.Add(pathEntry);
-                        h.Children.Add(pickBtn);
+                        //h.Children.Add(pathEntry);
+                        
                         h.Children.Add(preview);
+                        h.Children.Add(pickBtn);
                         v.Children.Add(h);
                         break;
 

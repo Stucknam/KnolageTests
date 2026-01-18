@@ -6,7 +6,7 @@ namespace KnolageTests.Models
     {
         public BlockType Type { get; set; }
         public string Content { get; set; }
-        public string? TempImageSource { get; set; }
+        public string? TempImageSource { get; set; } = null;
 
         public ArticleBlock()
         {

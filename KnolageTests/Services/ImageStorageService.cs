@@ -25,7 +25,7 @@ namespace KnolageTests.Services
         public string CopyToAppFolder(string sourcePath)
         {
             var extention = Path.GetExtension(sourcePath);
-            var fileName = $"{Guid.NewGuid}{extention}";
+            var fileName = $"{Guid.NewGuid()}{extention}";
             var destinationPath = Path.Combine(_folder, fileName);
 
             File.Copy(sourcePath, destinationPath, overwrite: true );
